@@ -22,6 +22,7 @@ namespace FireflyAssembler
             const static int DELETE_SCORE;
             const static int SUBST_SCORE;
             const static int MATCH_SCORE;
+            Sequence();
             Sequence(const char * s);
             Sequence(const std::string & s);
             Sequence(const Sequence & other);
@@ -34,6 +35,8 @@ namespace FireflyAssembler
                     int thisOverlap);
             int determineOverlap(const Sequence & other);
             int length();
+            void clear();
+            void append(const Sequence & other);
             char at(int index);
             std::string toString();
             bool operator == (const Sequence & other);

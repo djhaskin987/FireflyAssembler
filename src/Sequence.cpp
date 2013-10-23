@@ -24,6 +24,10 @@ void Sequence::copy(const Sequence & other)
     sequence = other.sequence;
 }
 
+Sequence::Sequence() : sequence()
+{
+}
+
 Sequence::Sequence(const char * s) : sequence()
 {
     while (*s)
@@ -58,6 +62,13 @@ Sequence::~Sequence()
     free();
 }
 
+void Sequence::append(const Sequence & other)
+{
+    sequence.insert(sequence.end(),
+            other.sequence.begin(),
+            other.sequence.end());
+}
+
 void Sequence::merge(const Sequence & other,
         int overlap)
 {
@@ -74,11 +85,10 @@ void Sequence::merge(const Sequence & other,
     sequence.clear();
     sequence.insert(sequence.end(),
             oldSequence.begin(),
-            oldSequence.end() - overlap);
+            oldSequence.begin() + (oldSequence.size() - overlap));
     sequence.insert(sequence.end(),
             other.sequence.begin(),
             other.sequence.end());
-
 }
 
 int Sequence::getScore(const vector<char> & a,
@@ -207,6 +217,11 @@ int Sequence::determineOverlap(const Sequence & other)
 int Sequence::length()
 {
     return sequence.size();
+}
+
+void Sequence::clear()
+{
+    sequence.clear();
 }
 
 char Sequence::at(int index)

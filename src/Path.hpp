@@ -21,7 +21,8 @@ namespace FireflyAssembler
             Path(const Path & other);
             Path & operator = (const Path & other);
 
-            int getNodeIndex(int pathIndex);
+            int getSequenceIndex(int pathIndex);
+            void getContigs(list<Sequence> & contigs);
             int size();
 
             ~Path();

@@ -11,7 +11,8 @@ namespace FireflyAssembler
     {
         private:
             std::vector<Sequence> sequences;
-            std::map<std::pair<int, int>, int> overlaps;
+            // from -> (to -> overlap)
+            std::map<int,map<int,int> > overlaps;
 
             void free();
             void copy(const Graph & other);
@@ -30,6 +31,7 @@ namespace FireflyAssembler
             int sequenceCount();
             void addSequence(const Sequence & sequence);
             int getOverlap(int first, int second);
+            const map<int,int> & getOverlapsFor(int first) const;
     };
 }
 
