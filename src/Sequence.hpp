@@ -16,8 +16,8 @@ namespace FireflyAssembler
                     const std::vector<char> & b);
             std::vector<char> sequence;
         public:
+            const static int MINIMUM_OVERLAP;
             const static double TOLERANCE_SCORE;
-            const static int MAX_INDELS;
             const static int INSERT_SCORE;
             const static int DELETE_SCORE;
             const static int SUBST_SCORE;
@@ -31,7 +31,7 @@ namespace FireflyAssembler
             ~Sequence();
 
             void merge(const Sequence & other,
-                    int overlap);
+                    int thisOverlap);
             int determineOverlap(const Sequence & other);
             int length();
             char at(int index);
