@@ -34,7 +34,7 @@ int test_main(int argc, char *argv[])
     Sequence i(". The british are coming This is the tail end of the thingy. BABOOSHKA!");
     cout << "Determining second indel overlap" << endl;
     int hiOverlap = h.determineOverlap(i);
-    cout << "Expected second indel overlap: " << 60 << endl;
+    cout << "Expected second indel overlap: " << 61 << endl;
     cout << "Actual second indel overlap: " << hiOverlap << endl;
     BOOST_CHECK(hiOverlap == 60);
 
@@ -44,8 +44,8 @@ int test_main(int argc, char *argv[])
     Sequence k(". The british are coming This is the tail end of the thingy? BABOOSHKA!");
     cout << "Determining third indel overlap" << endl;
     int jkOverlap = j.determineOverlap(k);
-    cout << "Expected third indel overlap: " << 60 << endl;
-    cout << "Actual second indel overlap: " << jkOverlap << endl;
+    cout << "Expected third indel overlap: " << 61 << endl;
+    cout << "Actual third indel overlap: " << jkOverlap << endl;
     BOOST_CHECK(jkOverlap == 60);
 
 
