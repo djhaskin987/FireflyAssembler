@@ -16,12 +16,12 @@ namespace FireflyAssembler
                     const std::vector<char> & b);
             std::vector<char> sequence;
         public:
-            const static int TOLERANCE_SCORE=4;
-            const static int INSERT_SCORE=3;
-            const static int DELETE_SCORE=3;
-            const static int SUBST_SCORE=1;
-            const static int MATCH_SCORE=0;
-            Sequence(char * s);
+            const static int TOLERANCE_SCORE;
+            const static int INSERT_SCORE;
+            const static int DELETE_SCORE;
+            const static int SUBST_SCORE;
+            const static int MATCH_SCORE;
+            Sequence(const char * s);
             Sequence(const std::string & s);
             Sequence(const Sequence & other);
 

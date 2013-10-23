@@ -1,7 +1,15 @@
 #include "Sequence.hpp"
+#include <stdexcept>
+#include <climits>
 
 using namespace FireflyAssembler;
 using namespace std;
+
+const int Sequence::TOLERANCE_SCORE = 0;
+const int Sequence::INSERT_SCORE = 5;
+const int Sequence::DELETE_SCORE = 5;
+const int Sequence::SUBST_SCORE = 1;
+const int Sequence::MATCH_SCORE = -3;
 
 void Sequence::free()
 {
@@ -13,7 +21,7 @@ void Sequence::copy(const Sequence & other)
     sequence = other.sequence;
 }
 
-Sequence::Sequence(char * s) : sequence()
+Sequence::Sequence(const char * s) : sequence()
 {
     while (*s)
     {
@@ -33,7 +41,7 @@ Sequence::Sequence(const Sequence & other)
     copy(other);
 }
 
-Sequence & Sequence::operator = Sequence(const Sequence & other)
+Sequence & Sequence::operator = (const Sequence & other)
 {
     if (this != &other)
     {
@@ -50,16 +58,16 @@ Sequence::~Sequence()
 void Sequence::merge(const Sequence & other,
         int overlap)
 {
-    if (overlap >= other.sequence.size)
+    if (overlap > other.sequence.size())
     {
         throw runtime_error("overlap exceeds other sequence argument's length");
     }
-    if (overlap >= sequence.size())
+    if (overlap > sequence.size())
     {
         throw runtime_error("overlap exceeds this sequence's length");
     }
 
-    list<char> oldSequence = sequence;
+    vector<char> oldSequence = sequence;
     sequence.clear();
     sequence.insert(sequence.end(),
             oldSequence.begin(),
@@ -159,10 +167,6 @@ int Sequence::determineOverlap(const Sequence & other)
         return 0;
     }
     return sequence.size() - maxOverlapOffset;
-}
-int Sequence::getOverlap(const Sequence & other)
-{
-
 }
 
 int Sequence::length()
