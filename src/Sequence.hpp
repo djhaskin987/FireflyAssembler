@@ -35,6 +35,8 @@ namespace FireflyAssembler
             int length();
             char at(int index);
             std::string toString();
+            bool operator == (const Sequence & other);
+            bool operator < (const Sequence & other);
     };
     std::ostream & operator << (std::ostream & o, Sequence & s);
 }

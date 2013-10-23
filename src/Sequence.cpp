@@ -181,6 +181,17 @@ string Sequence::toString()
             sequence.end());
 }
 
+bool Sequence::operator == (const Sequence & other)
+{
+    return sequence == other.sequence;
+}
+
+bool Sequence::operator < (const Sequence & other)
+{
+    return sequence < other.sequence;
+}
+
+
 ostream & operator << (ostream & o,
         Sequence & s)
 {
