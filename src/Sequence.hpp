@@ -16,7 +16,8 @@ namespace FireflyAssembler
                     const std::vector<char> & b);
             std::vector<char> sequence;
         public:
-            const static int TOLERANCE_SCORE;
+            const static double TOLERANCE_SCORE;
+            const static int MAX_INDELS;
             const static int INSERT_SCORE;
             const static int DELETE_SCORE;
             const static int SUBST_SCORE;

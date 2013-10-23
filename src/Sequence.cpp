@@ -1,15 +1,18 @@
 #include "Sequence.hpp"
 #include <stdexcept>
-#include <climits>
+#include <limits>
+#include <iostream>
 
 using namespace FireflyAssembler;
 using namespace std;
 
-const int Sequence::TOLERANCE_SCORE = 0;
-const int Sequence::INSERT_SCORE = 5;
-const int Sequence::DELETE_SCORE = 5;
+// allow 5% error in the overlap (ish)
+const double Sequence::TOLERANCE_SCORE = .15;
+const int Sequence::MAX_INDELS = 3;
+const int Sequence::INSERT_SCORE = 3;
+const int Sequence::DELETE_SCORE = 3;
 const int Sequence::SUBST_SCORE = 1;
-const int Sequence::MATCH_SCORE = -3;
+const int Sequence::MATCH_SCORE = 0;
 
 void Sequence::free()
 {
@@ -87,6 +90,9 @@ int Sequence::getScore(const vector<char> & a,
     for (int i = 1; i <= a.size(); i++)
     {
         matrix[0].push_back(matrix[0][i-1]+Sequence::DELETE_SCORE);
+        // don't punish for shifts.
+        //matrix[0].push_back(0);
+
     }
 
     int row;
@@ -95,6 +101,8 @@ int Sequence::getScore(const vector<char> & a,
         matrix.push_back(vector<int>());
 
         matrix[row].push_back(matrix[row-1][0]+Sequence::INSERT_SCORE);
+        // don't punish for shifts.
+        //matrix[row].push_back(0);
         for (int col = 1; col <= a.size(); col++)
         {
             int insertScore = matrix[row-1][col] + Sequence::INSERT_SCORE;
@@ -130,16 +138,17 @@ int Sequence::getScore(const vector<char> & a,
             }
         }
     }
-    return matrix[b.size()-1][a.size()-1];
+    return matrix[b.size()][a.size()];
 }
 
 int Sequence::determineOverlap(const Sequence & other)
 {
     int maxPossibleOverlap = sequence.size();
     int maxOverlapOffset = 0;
-    int minScore = INT_MAX;
+    double minScore = numeric_limits<double>::infinity();
     for (int aOffset = 0; aOffset < sequence.size(); aOffset++)
     {
+
         vector<char> aSegment;
         vector<char> bSegment;
         int bEnd = other.sequence.size();
@@ -153,8 +162,8 @@ int Sequence::determineOverlap(const Sequence & other)
         bSegment.insert(bSegment.end(),
                 other.sequence.begin(),
                 other.sequence.begin() + bEnd);
-
-        int segmentScore = getScore(aSegment, bSegment);
+        double segmentScore = ((double)getScore(aSegment, bSegment)) /
+            ((double)aSegment.size());
         if (segmentScore < minScore)
         {
             minScore = segmentScore;
@@ -196,7 +205,7 @@ bool Sequence::operator < (const Sequence & other)
 }
 
 
-ostream & operator << (ostream & o,
+ostream & FireflyAssembler::operator << (ostream & o,
         Sequence & s)
 {
     o << s.toString();
