@@ -1,0 +1,9 @@
+libraryPath = '/usr/lib'
+sources = ['Sequence.cpp', 'Sequence.hpp']
+prod = Environment()
+prod.Append(CCFLAGS = ['-O3'])
+prod.Append(LIBPATH = [libraryPath])
+mainSources = sources
+mainSources.append('FireflyAssembler-main.cpp')
+program = prod.Program('FireflyAssembler', mainSources)
+Default(program)

@@ -1,0 +1,17 @@
+libraryPath = '/usr/lib'
+sources = ['../src/Sequence.cpp', '../src/Sequence.hpp']
+test_sources = ['main-test.cpp','Sequence-test.cpp']
+test_sources.extend(sources)
+
+test = Environment()
+
+test.Append(LIBPATH = [libraryPath])
+test.Append(LINKFLAGS = ['-lboost_unit_test_framework'])
+
+
+test.Append(CCFLAGS = ['-g', '-O0'])
+mainTest = test.Program(target='main-test', source=test_sources)
+# Depend on the runner to ensure that it's built before running it.
+mainTestAlias = Alias('test', [mainTest], mainTest[0].path)
+# Simply required.  Without it, 'test' is never considered out of date.
+AlwaysBuild(mainTestAlias)
