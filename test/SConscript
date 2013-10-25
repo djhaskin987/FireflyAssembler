@@ -9,7 +9,7 @@ test.Append(LIBPATH = [libraryPath])
 test.Append(LINKFLAGS = ['-lboost_unit_test_framework'])
 
 
-test.Append(CCFLAGS = ['-g', '-O0'])
+test.Append(CCFLAGS = ['-g', '-O0', '-std=c++11', '-Werror'])
 mainTest = test.Program(target='main-test', source=test_sources)
 # Depend on the runner to ensure that it's built before running it.
 mainTestAlias = Alias('test', [mainTest], mainTest[0].path)
