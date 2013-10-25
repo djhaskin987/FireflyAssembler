@@ -92,7 +92,7 @@ void Sequence::merge(const Sequence & other,
 }
 
 int Sequence::getScore(const vector<char> & a,
-        const vector<char> & b)
+        const vector<char> & b) const
 {
     vector<vector<int> > matrix;
     matrix.push_back(vector<int>());
@@ -146,7 +146,7 @@ int Sequence::getScore(const vector<char> & a,
     return matrix[b.size()][a.size()];
 }
 
-int Sequence::determineOverlap(const Sequence & other)
+int Sequence::determineOverlap(const Sequence & other) const
 {
     int minAOffset = 0;
     int minBEnd = other.sequence.size();
@@ -214,7 +214,7 @@ int Sequence::determineOverlap(const Sequence & other)
     return sequence.size() - minAOffset;
 }
 
-int Sequence::length()
+int Sequence::length() const
 {
     return sequence.size();
 }
@@ -224,30 +224,33 @@ void Sequence::clear()
     sequence.clear();
 }
 
-char Sequence::at(int index)
+char Sequence::operator [](int index) const
 {
     return sequence[index];
 }
 
-string Sequence::toString()
+string Sequence::str() const
 {
     return string(sequence.begin(),
             sequence.end());
 }
 
-bool Sequence::operator == (const Sequence & other)
+bool Sequence::operator == (const Sequence & other) const
 {
     return sequence == other.sequence;
 }
 
-bool Sequence::operator < (const Sequence & other)
+bool Sequence::operator < (const Sequence & other) const
 {
     return sequence < other.sequence;
 }
 
-
 ostream & FireflyAssembler::operator << (ostream & o,
-        Sequence & s)
+        const Sequence & s)
 {
-    o << s.toString();
+    for (int i = 0; i < s.length(); i++)
+    {
+        o << s[i];
+    }
+    return o;
 }

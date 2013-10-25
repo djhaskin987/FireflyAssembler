@@ -13,7 +13,7 @@ namespace FireflyAssembler
             void free();
             void copy(const Sequence & other);
             int getScore(const std::vector<char> & a,
-                    const std::vector<char> & b);
+                    const std::vector<char> & b) const;
             std::vector<char> sequence;
         public:
             const static int MINIMUM_OVERLAP;
@@ -33,16 +33,16 @@ namespace FireflyAssembler
 
             void merge(const Sequence & other,
                     int thisOverlap);
-            int determineOverlap(const Sequence & other);
-            int length();
+            int determineOverlap(const Sequence & other) const;
+            int length() const;
             void clear();
             void append(const Sequence & other);
-            char at(int index);
-            std::string toString();
-            bool operator == (const Sequence & other);
-            bool operator < (const Sequence & other);
+            std::string str() const;
+            char operator [] (int index) const;
+            bool operator == (const Sequence & other) const;
+            bool operator < (const Sequence & other) const;
     };
-    std::ostream & operator << (std::ostream & o, Sequence & s);
+    std::ostream & operator << (std::ostream & o, const Sequence & s);
 }
 
 #endif
