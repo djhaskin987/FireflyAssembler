@@ -1,7 +1,8 @@
 libraryPath = '/usr/lib'
 sources = ['../src/Sequence.cpp', '../src/Sequence.hpp', '../src/Graph.hpp', \
-    '../src/Graph.cpp']
+    '../src/Graph.cpp', '../src/Path.hpp', '../src/Path.cpp']
 test_sources = ['main-test.cpp','Sequence-test.cpp', 'Graph-test.cpp', \
+    'Path-test.cpp',
     'SmallSequencesFixture.hpp']
 test_sources.extend(sources)
 

@@ -64,7 +64,7 @@ else
 #endif
 HERE
 cat > ${class}.cpp << HERE
-#include "${namespace}${class}.hpp"
+#include "${class}.hpp"
 
 using namespace ${namespace};
 using namespace std;
