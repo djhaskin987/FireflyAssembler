@@ -28,24 +28,6 @@ using namespace std;
 //        void addSequence(const Sequence & sequence);
 //};
 
-class GraphFixture
-{
-    private:
-        vector<Sequence> sequences;
-    public:
-        GraphFixture() : sequences()
-        {
-        }
-        const int size() const
-        {
-            return sequences.size();
-        }
-
-        const Sequence & operator [] (int index)
-        {
-            return sequences[index];
-        }
-}
 
 BOOST_AUTO_TEST_CASE(Graph_basic_test)
 {
