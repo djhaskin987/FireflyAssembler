@@ -16,8 +16,8 @@ namespace FireflyAssembler
                     const std::vector<char> & b) const;
             std::vector<char> sequence;
         public:
-            const static int MINIMUM_OVERLAP;
-            const static double TOLERANCE_SCORE;
+            static int MINIMUM_OVERLAP;
+            static double TOLERANCE_SCORE;
             const static int INSERT_SCORE;
             const static int DELETE_SCORE;
             const static int SUBST_SCORE;

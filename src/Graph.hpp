@@ -2,6 +2,7 @@
 #define __FireflyAssemblerGraph__
 #include "Sequence.hpp"
 #include <vector>
+#include <unordered_set>
 #include <unordered_map>
 
 namespace FireflyAssembler
@@ -33,6 +34,9 @@ namespace FireflyAssembler
             const std::unordered_map<int,int> & getOverlapsFor(int first) const;
 
             void addSequence(const Sequence & sequence);
+
+            void getSources(std::unordered_set<int> & s);
+            void getSinks(std::unordered_set<int> & s);
     };
 }
 

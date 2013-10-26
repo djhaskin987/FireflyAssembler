@@ -1,9 +1,32 @@
 #!/bin/sh
+normalClass=1
+interface=0
 
-namespace="${1}"
-shift
-class="${1}"
-shift
+while [ -n "${1}" ]
+do
+    case "${1}" in
+        -i|--interface)
+            normalClass=0
+            interface=1
+            shift
+            ;;
+        -c|--normal-class)
+            normalClass=1
+            interface=0
+            shift
+            ;;
+        *)
+            if [ -z "${namespace}" ]
+            then
+                namespace="${1}"
+            elif [ -z "${class}" ]
+            then
+                class="${1}"
+            fi
+            shift
+            ;;
+    esac
+done
 
 cat > ${class}.hpp << HERE
 #ifndef __${namespace}${class}__
@@ -11,11 +34,20 @@ cat > ${class}.hpp << HERE
 
 namespace ${namespace}
 {
-
     class ${class}
     {
+HERE
+if [ ${interface} -ne 0 ]
+then
+    cat >> ${class}.hpp << HERE
+        public:
+    };
+}
+#endif
+HERE
+else
+    cat >> ${class}.hpp << HERE
         private:
-            void init();
             void free();
             void copy(const ${class} & other);
 
@@ -31,16 +63,11 @@ namespace ${namespace}
 
 #endif
 HERE
-
 cat > ${class}.cpp << HERE
 #include "${namespace}${class}.hpp"
 
 using namespace ${namespace};
-
-void $class::init()
-{
-
-}
+using namespace std;
 
 void ${class}::free()
 {
@@ -61,7 +88,7 @@ ${class}::${class}(const ${class} & other)
     copy(other);
 }
 
-${class} & ${class}::operator = ${class}(const ${class} & other)
+${class} & ${class}::operator = (const ${class} & other)
 {
     if (this != &other)
     {
@@ -75,3 +102,4 @@ ${class}::~${class}()
     free();
 }
 HERE
+fi

@@ -2,10 +2,10 @@
 #include <cstdlib>
 #include "../src/Sequence.hpp"
 #include "../src/Graph.hpp"
+#include "SmallSequencesFixture.hpp"
 
 using namespace FireflyAssembler;
 using namespace std;
-
 
 //-- to test --
 //class Graph
@@ -31,8 +31,28 @@ using namespace std;
 
 BOOST_AUTO_TEST_CASE(Graph_basic_test)
 {
-    GraphFixture g = new GraphFixture();
+    SmallSequencesFixture g;
     Graph graph;
-    
 
+    graph.addSequence(g[0]);
+    graph.addSequence(g[1]);
+    graph.addSequence(g[2]);
+    graph.addSequence(g[3]);
+    graph.addSequence(g[4]);
+    BOOST_CHECK(graph.sequenceCount() == 5);
+    unordered_set<int> sources;
+    graph.getSources(sources);
+    BOOST_CHECK(sources.find(0) != sources.end());
+    unordered_set<int> sinks;
+    graph.getSinks(sinks);
+    BOOST_CHECK(sinks.find(4) != sinks.end());
+    BOOST_CHECK(graph.hasOverlap(0,1));
+    BOOST_CHECK(graph.getOverlap(0,1) == 21);
+    BOOST_CHECK(graph.hasOverlap(1,2));
+    BOOST_CHECK(graph.getOverlap(1,2) == 21);
+    BOOST_CHECK(graph.hasOverlap(2,3));
+    BOOST_CHECK(graph.getOverlap(2,3) == 21);
+    BOOST_CHECK(graph.hasOverlap(0,3));
+    BOOST_CHECK(graph.getOverlap(0,3) == 11);
+    BOOST_CHECK(graph.getOverlapsFor(0).size() == 3);
 }

@@ -7,8 +7,8 @@ using namespace FireflyAssembler;
 using namespace std;
 
 // allow 5% error in the overlap (ish)
-const int Sequence::MINIMUM_OVERLAP = 5;
-const double Sequence::TOLERANCE_SCORE = .05;
+int Sequence::MINIMUM_OVERLAP = 5;
+double Sequence::TOLERANCE_SCORE = .05;
 const int Sequence::INSERT_SCORE = 3;
 const int Sequence::DELETE_SCORE = 3;
 const int Sequence::SUBST_SCORE = 1;

@@ -1,34 +1,37 @@
 #ifndef __FireflyAssemblerSmallSequencesFixture__
 #define __FireflyAssemblerSmallSequencesFixutre__
 
+#include <vector>
+#include "../src/Sequence.hpp"
 
-namespace FireflyAssember
+namespace FireflyAssembler
 {
 
 class SmallSequencesFixture
 {
 
     private:
-        vector<Sequence> sequences;
-        Sequence fullSequence;
+        std::vector<FireflyAssembler::Sequence> sequences;
+        FireflyAssembler::Sequence fullSequence;
     public:
-        GraphFixture() : sequences(),
+        SmallSequencesFixture() : sequences(),
         fullSequence("ATGTGTGCAACTGTGTGTCTTATGTATTCTGTTATGTGTATATGAGATAGGCTCTTGCTCTGTTGCCCAGGCTGGA")
         {
-            sequences.push_back(Sequence("ATGTGTGCAACTGTGTGTATTATGTA"));
-            sequences.push_back(Sequence("TGCAACTGTGTGTATTATGTATTCTG"));
-            sequences.push_back(Sequence("CTGTGTGTATTATGTATTCTGTTATG"));
-            sequences.push_back(Sequence("TGTATTATGTATTCTGTTATGTGTAT"));
-            sequences.push_back(Sequence("GGCTCTTGCCCTGTTGCCCAGGCTGG"));
+            sequences.push_back(FireflyAssembler::Sequence("ATGTGTGCAACTGTGTGTATTATGTA"));
+            sequences.push_back(FireflyAssembler::Sequence("TGCAACTGTGTGTATTATGTATTCTG"));
+            sequences.push_back(FireflyAssembler::Sequence("CTGTGTGTATTATGTATTCTGTTATG"));
+            sequences.push_back(FireflyAssembler::Sequence("TGTATTATGTATTCTGTTATGTGTAT"));
+            sequences.push_back(FireflyAssembler::Sequence("GGCTCTTGCCCTGTTGCCCAGGCTGG"));
         }
         const int size() const
         {
             return sequences.size();
         }
 
-        const Sequence & operator [] (int index)
+        const FireflyAssembler::Sequence & operator [] (int index)
         {
             return sequences[index];
         }
 };
 }
+#endif

@@ -59,7 +59,7 @@ bool Graph::hasOverlapsFor(int first) const
     }
     else
     {
-        return true;
+        return (firstIter->second).size() > 0;
     }
 }
 
@@ -109,7 +109,7 @@ const std::unordered_map<int,int> & Graph::getOverlapsFor(int first) const
 {
     unordered_map<int,unordered_map<int,int> >::const_iterator firstIter =
         overlaps.find(first);
-    if (firstIter == overlaps.end())
+    if (firstIter == overlaps.end() || (firstIter->second).size() == 0)
     {
         throw runtime_error("No such overlap index");
     }
@@ -137,5 +137,45 @@ void Graph::addSequence(const Sequence & sequence)
     {
         addOverlap(i,newIndex);
         addOverlap(newIndex,i);
+    }
+}
+
+void Graph::getSources(unordered_set<int> & s)
+{
+
+    s.clear();
+
+    for (int tested = 0; tested < sequences.size(); tested++)
+    {
+        bool isSource = true;
+        for (int index = 0; index < sequences.size(); index++)
+        {
+            if (tested == index)
+            {
+                continue;
+            }
+            isSource = isSource && !hasOverlap(index, tested);
+            if (!isSource)
+            {
+                break;
+            }
+        }
+        if (isSource)
+        {
+            s.insert(tested);
+        }
+    }
+}
+
+void Graph::getSinks(unordered_set<int> & s)
+{
+    s.clear();
+
+    for (int tested = 0; tested < sequences.size(); tested++)
+    {
+        if (!hasOverlapsFor(tested))
+        {
+            s.insert(tested);
+        }
     }
 }
