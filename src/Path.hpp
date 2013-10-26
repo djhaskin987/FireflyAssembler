@@ -1,32 +1,36 @@
 #ifndef __FireflyAssemblerPath__
 #define __FireflyAssemblerPath__
 
-#include "FireflyAssemblerGraph.hpp"
-#include <stdexcept>
-
 namespace FireflyAssembler
 {
     class Path
     {
         private:
+            Graph * pathGraph;
+            std::vector<int> path;
+
             void free();
             void copy(const Path & other);
-            void verifyPath() throw(runtime_error);
 
-            Graph * graph;
-            vector<int> path;
+            void validatePath();
 
         public:
-            Path(Graph * graph, list<path>);
+            template <typename inputIterator>
+            Path(const Graph & g,
+                    inputIterator first,
+                    inputIterator last);
             Path(const Path & other);
+
             Path & operator = (const Path & other);
 
-            int getSequenceIndex(int pathIndex);
-            void getContigs(list<Sequence> & contigs);
-            int size();
-
             ~Path();
+
+            const Graph & getGraph() const;
+            int size() const;
+            int operator [] (int index) const;
+            void getContigs(std::vector<Sequence> & ss);
     };
+    ostream & operator << (ostream & s, const Path & p);
 }
 
 #endif
