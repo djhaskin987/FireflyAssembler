@@ -1,5 +1,7 @@
 #include "Sequence.hpp"
 #include "Graph.hpp"
+#include "Path.hpp"
+
 #include <iostream>
 
 int main(int argc, char *argv[])

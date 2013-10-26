@@ -1,6 +1,7 @@
 libraryPath = '/usr/lib'
 sources = ['Sequence.cpp', 'Sequence.hpp',
-    'Graph.hpp', 'Graph.cpp']
+    'Graph.hpp', 'Graph.cpp',
+    'Path.hpp', 'Path.cpp']
 prod = Environment()
 prod.Append(CCFLAGS = ['-O3','-std=c++11','-Werror'])
 prod.Append(CFLAGS = ['-std=c++11','-Werror'])
