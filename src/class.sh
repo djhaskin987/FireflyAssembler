@@ -1,6 +1,7 @@
 #!/bin/sh
 normalClass=1
 interface=0
+algorithm=0
 
 while [ -n "${1}" ]
 do
@@ -13,6 +14,12 @@ do
         -c|--normal-class)
             normalClass=1
             interface=0
+            shift
+            ;;
+        -a|--algorithm)
+            algorithm=1
+            interface=0
+            normalClass=0
             shift
             ;;
         *)
@@ -31,20 +38,32 @@ done
 cat > ${class}.hpp << HERE
 #ifndef __${namespace}${class}__
 #define __${namespace}${class}__
+#include <memory>
 
 namespace ${namespace}
 {
     class ${class}
     {
 HERE
-if [ ${interface} -ne 0 ]
+if [ ${interface} -ne 0 -o ${algorithm} -ne 0 ]
 then
     cat >> ${class}.hpp << HERE
         public:
     };
+    typedef std::shared_ptr<${class}> ${class}Pointer;
 }
 #endif
 HERE
+    if [ ${algorithm} -ne 0 ]
+    then
+        cat > ${class}.cpp << HERE
+#include "${class}.hpp"
+
+using namespace ${namespace};
+using namespace std;
+
+HERE
+    fi
 else
     cat >> ${class}.hpp << HERE
         private:
@@ -57,8 +76,9 @@ else
 
             ${class} & operator = (const ${class} & other);
 
-            ~${class}();
+            virtual ~${class}();
     };
+    typedef std::shared_ptr<${class}> ${class}Pointer;
 }
 
 #endif

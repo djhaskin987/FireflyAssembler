@@ -1,9 +1,12 @@
 #ifndef __FireflyAssemblerPath__
 #define __FireflyAssemblerPath__
+#include "Types.hpp"
 #include "Sequence.hpp"
 #include "Graph.hpp"
 #include <ostream>
+#include <memory>
 #include <vector>
+
 
 
 namespace FireflyAssembler
@@ -33,7 +36,8 @@ namespace FireflyAssembler
             const Graph & getGraph() const;
             int size() const;
             int operator [] (int index) const;
-            void getContigs(std::vector<Sequence> & ss);
+
+            VectorPointer<Sequence> getContigs() const;
     };
     std::ostream & operator << (std::ostream & s, const Path & p);
 
@@ -45,6 +49,7 @@ namespace FireflyAssembler
     {
     }
 
+    typedef std::shared_ptr<Path> PathPointer;
 }
 
 #endif

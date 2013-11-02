@@ -43,10 +43,9 @@ int Graph::sequenceCount() const
     return sequences.size();
 }
 
-void Graph::getSequence(Sequence & seq, int index) const
+const Sequence & Graph::getSequence(int index) const
 {
-    seq.clear();
-    seq.append(sequences[index]);
+    return sequences[index];
 }
 
 bool Graph::hasOverlapsFor(int first) const
@@ -140,10 +139,9 @@ void Graph::addSequence(const Sequence & sequence)
     }
 }
 
-void Graph::getSources(unordered_set<int> & s)
+HashSetPointer<int> Graph::getSources() const
 {
-
-    s.clear();
+    HashSetPointer<int> s(new HashSet<int>());
 
     for (int tested = 0; tested < sequences.size(); tested++)
     {
@@ -162,20 +160,22 @@ void Graph::getSources(unordered_set<int> & s)
         }
         if (isSource)
         {
-            s.insert(tested);
+            s->insert(tested);
         }
     }
+    return s;
 }
 
-void Graph::getSinks(unordered_set<int> & s)
+HashSetPointer<int> Graph::getSinks() const
 {
-    s.clear();
+    HashSetPointer<int> s(new HashSet<int>());
 
     for (int tested = 0; tested < sequences.size(); tested++)
     {
         if (!hasOverlapsFor(tested))
         {
-            s.insert(tested);
+            s->insert(tested);
         }
     }
+    return s;
 }

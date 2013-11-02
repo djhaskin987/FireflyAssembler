@@ -39,13 +39,16 @@ BOOST_AUTO_TEST_CASE(Graph_basic_test)
     graph.addSequence(g[2]);
     graph.addSequence(g[3]);
     graph.addSequence(g[4]);
+    BOOST_CHECK(graph.getSequence(0) == g[0]);
+    BOOST_CHECK(graph.getSequence(1) == g[1]);
+    BOOST_CHECK(graph.getSequence(2) == g[2]);
+    BOOST_CHECK(graph.getSequence(3) == g[3]);
+    BOOST_CHECK(graph.getSequence(4) == g[4]);
     BOOST_CHECK(graph.sequenceCount() == 5);
-    unordered_set<int> sources;
-    graph.getSources(sources);
-    BOOST_CHECK(sources.find(0) != sources.end());
-    unordered_set<int> sinks;
-    graph.getSinks(sinks);
-    BOOST_CHECK(sinks.find(4) != sinks.end());
+    HashSetPointer<int> sources = graph.getSources();
+    BOOST_CHECK(sources->find(0) != sources->end());
+    HashSetPointer<int> sinks = graph.getSinks();
+    BOOST_CHECK(sinks->find(4) != sinks->end());
     BOOST_CHECK(graph.hasOverlap(0,1));
     BOOST_CHECK(graph.getOverlap(0,1) == 21);
     BOOST_CHECK(graph.hasOverlap(1,2));
@@ -55,4 +58,6 @@ BOOST_AUTO_TEST_CASE(Graph_basic_test)
     BOOST_CHECK(graph.hasOverlap(0,3));
     BOOST_CHECK(graph.getOverlap(0,3) == 11);
     BOOST_CHECK(graph.getOverlapsFor(0).size() == 3);
+
+
 }

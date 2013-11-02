@@ -47,13 +47,11 @@ BOOST_AUTO_TEST_CASE(Path_basic_test)
     int * btr = &backward[0];
     Path p(graph,
             ptr,ptr+5);
-    vector<Sequence> ss;
-    p.getContigs(ss);
-    BOOST_CHECK(ss.size() == 2);
+    VectorPointer<Sequence> ss = p.getContigs();
+    BOOST_CHECK(ss->size() == 2);
     Path r(graph,
             btr,
             btr+5);
-    r.getContigs(ss);
-    BOOST_CHECK(ss.size() == 5);
-
+    ss = r.getContigs();
+    BOOST_CHECK(ss->size() == 5);
 }

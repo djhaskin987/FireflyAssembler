@@ -229,10 +229,10 @@ char Sequence::operator [](int index) const
     return sequence[index];
 }
 
-string Sequence::str() const
+StringPointer Sequence::str() const
 {
-    return string(sequence.begin(),
-            sequence.end());
+    return StringPointer(new string(sequence.begin(),
+            sequence.end()));
 }
 
 bool Sequence::operator == (const Sequence & other) const

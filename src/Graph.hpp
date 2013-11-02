@@ -1,6 +1,8 @@
 #ifndef __FireflyAssemblerGraph__
 #define __FireflyAssemblerGraph__
+#include "Types.hpp"
 #include "Sequence.hpp"
+#include <memory>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
@@ -27,7 +29,7 @@ namespace FireflyAssembler
             ~Graph();
 
             int sequenceCount() const;
-            void getSequence(Sequence & seq, int index) const;
+            const Sequence & getSequence(int index) const;
             bool hasOverlap(int first, int second) const;
             bool hasOverlapsFor(int first) const;
             int getOverlap(int first, int second) const;
@@ -35,9 +37,10 @@ namespace FireflyAssembler
 
             void addSequence(const Sequence & sequence);
 
-            void getSources(std::unordered_set<int> & s);
-            void getSinks(std::unordered_set<int> & s);
+            HashSetPointer<int> getSources() const;
+            HashSetPointer<int> getSinks() const;
     };
+    typedef std::shared_ptr<Graph> GraphPointer;
 }
 
 #endif

@@ -82,31 +82,30 @@ int Path::operator [] (int index) const
     return path[index];
 }
 
-void Path::getContigs(std::vector<Sequence> & ss)
+VectorPointer<Sequence> Path::getContigs() const
 {
-    ss.clear();
+    VectorPointer<Sequence> ss(new vector<Sequence>());
     if (path.size() <= 0)
     {
-        return;
+        return ss;
     }
-    ss.push_back(Sequence());
     int currentIndex = 0;
-    pathGraph->getSequence(ss[currentIndex],path[0]);
+    ss->push_back(pathGraph->getSequence(path[0]));
     for (int index = 1; index < path.size(); index++)
     {
-        Sequence nextSequence;
-        pathGraph->getSequence(nextSequence, index);
+        const Sequence & nextSequence = pathGraph->getSequence(index);
         if (pathGraph->hasOverlap(path[index-1],path[index]))
         {
-            ss[currentIndex].merge(nextSequence,
+            (*ss)[currentIndex].merge(nextSequence,
                     pathGraph->getOverlap(path[index]-1,path[index]));
         }
         else
         {
-            ss.push_back(nextSequence);
+            ss->push_back(nextSequence);
             currentIndex++;
         }
     }
+    return ss;
 }
 
 ostream & operator << (ostream & s, const Path & p)

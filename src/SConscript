@@ -1,11 +1,17 @@
 libraryPath = '/usr/lib'
-sources = ['Sequence.cpp', 'Sequence.hpp',
-    'Graph.hpp', 'Graph.cpp',
-    'Path.hpp', 'Path.cpp']
+sources = ['Types.hpp', \
+    'Sequence.cpp', 'Sequence.hpp', \
+    'Graph.hpp', 'Graph.cpp', \
+    'Path.hpp', 'Path.cpp', \
+    'FitnessFunction.hpp',
+    'MeanOverlap.cpp', 'MeanOverlap.hpp', \
+    'PathFinder.hpp', \
+    'GreedyPathFinder.hpp', 'GreedyPathFinder.cpp']
 prod = Environment()
 prod.Append(CCFLAGS = ['-O3','-std=c++11','-Werror'])
 prod.Append(CFLAGS = ['-std=c++11','-Werror'])
 prod.Append(LINKFLAGS = ['-std=c++11','-Werror'])
+prod.Append(LINKFLAGS = ['-lboost_regex'])
 prod.Append(LIBPATH = [libraryPath])
 mainSources = sources
 mainSources.append('FireflyAssembler-main.cpp')

@@ -1,8 +1,9 @@
 #ifndef __FireflyAssemblerSequence__
 #define __FireflyAssemblerSequence__
-
+#include "Types.hpp"
 #include <vector>
 #include <string>
+#include <memory>
 #include <ostream>
 
 namespace FireflyAssembler
@@ -37,12 +38,13 @@ namespace FireflyAssembler
             int length() const;
             void clear();
             void append(const Sequence & other);
-            std::string str() const;
+            StringPointer str() const;
             char operator [] (int index) const;
             bool operator == (const Sequence & other) const;
             bool operator < (const Sequence & other) const;
     };
     std::ostream & operator << (std::ostream & o, const Sequence & s);
+    typedef std::shared_ptr<Sequence> SequencePointer;
 }
 
 #endif

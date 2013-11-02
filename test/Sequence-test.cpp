@@ -8,13 +8,13 @@ BOOST_AUTO_TEST_CASE(Sequence_basic_test)
     Sequence a("The quick brown fox jumped over the lazy dog.");
     string aString = "The quick brown fox jumped over the lazy dog.";
     BOOST_MESSAGE("Checking basics...");
-    BOOST_CHECK(a.str() == aString);
+    BOOST_CHECK((*a.str()) == aString);
     BOOST_CHECK(a[6] == 'i');
     BOOST_CHECK(a[12] == 'o');
     BOOST_CHECK(a.length() == 45);
     stringstream out;
     out << a;
-    BOOST_CHECK(out.str().length() == 45);
+    BOOST_CHECK(out.str()->length() == 45);
 }
 
 BOOST_AUTO_TEST_CASE(Sequence_basic_overlap_test)
