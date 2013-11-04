@@ -41,6 +41,7 @@ VectorPointer<Sequence> deserializeSequences(string fileName)
         }
     }
     in.close();
+    return sequences;
 }
 
 void usage()
@@ -52,13 +53,15 @@ void usage()
 
 int main(int argc, char * argv[])
 {
+    cout << "ARGC: " << argc << endl;
     // TODO: Use Boost.program_options here later
     // Add greedy-or-firefly assembler options
     // Add fitness function options
     // Add distance metric options
-    if (argc != 1)
+    if (argc != 2)
     {
         usage();
+        return 1;
     }
     string filename(argv[1]);
     VectorPointer<Sequence>

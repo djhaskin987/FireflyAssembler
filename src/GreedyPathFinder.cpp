@@ -98,7 +98,7 @@ VectorPointer<int> GreedyPathFinder::getPathFromMap(const HashMap<int,int> & map
     for (int i = 0; i < pathSize; i++)
     {
         vecPtr->push_back(currentIndex);
-        currentIndex = map.find(currentIndex)->second;
+        currentIndex = map.find(currentIndex).second;
     }
     return vecPtr;
-}
+
