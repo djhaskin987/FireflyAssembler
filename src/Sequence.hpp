@@ -15,9 +15,11 @@ namespace FireflyAssembler
             void copy(const Sequence & other);
             int getScore(const std::vector<char> & a,
                     const std::vector<char> & b) const;
+            double scoreShortcut(const std::vector<char> & a,
+                    const std::vector<char> & b) const;
             std::vector<char> sequence;
         public:
-            static int MINIMUM_OVERLAP;
+            static int MINIMUM_MATCH;
             static double TOLERANCE_SCORE;
             const static int INSERT_SCORE;
             const static int DELETE_SCORE;
@@ -35,6 +37,7 @@ namespace FireflyAssembler
             void merge(const Sequence & other,
                     int thisOverlap);
             int determineOverlap(const Sequence & other) const;
+            int containsSize(const Sequence & other) const;
             int length() const;
             void clear();
             void append(const Sequence & other);
