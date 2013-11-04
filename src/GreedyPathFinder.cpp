@@ -43,8 +43,10 @@ PathPointer GreedyPathFinder::findPath(const Graph & graph,
         if (fromVisited.find(from) == fromVisited.end() &&
                 // and I've not already visited there...
                 toVisited.find(to) == toVisited.end() &&
-                // and I'm going nowhere I've been...
-                fromVisited.find(to) == fromVisited.end())
+                // and either I'm going nowhere I've been, or
+                // I'm coming from somewhere I've not seen yet...
+                (fromVisited.find(to) == fromVisited.end() ||
+                 toVisited.find(from) == toVisited.end()))
         {
             // then I must be an edge on a hamiltonian path
             fromVisited.insert(from);
@@ -98,7 +100,8 @@ VectorPointer<int> GreedyPathFinder::getPathFromMap(const HashMap<int,int> & map
     for (int i = 0; i < pathSize; i++)
     {
         vecPtr->push_back(currentIndex);
-        currentIndex = map.find(currentIndex).second;
+        currentIndex = map.find(currentIndex)->second;
     }
     return vecPtr;
+}
 
