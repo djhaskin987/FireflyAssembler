@@ -29,7 +29,8 @@ SequenceVectorPointer deserializeSequences(string fileName)
     ifstream in(fileName.c_str());
     if (!in.is_open())
     {
-        cerr << "Problem occurred in opening file." << endl;
+        cerr << "Problem occurred in opening file for input." << endl;
+        exit(1);
     }
 
     // Read file record-wise.
@@ -92,16 +93,11 @@ void getArgs(distance_type & distanceMeasure,
         int argc,
         char *argv[])
 {
-    if (argc < 3)
-    {
-        cerr << "Not enough arguments." << endl;
-        usage(1);
-    }
     int currentArgIndex = 1;
     cmatch parts;
     regex keyValOption("^([^=]*)=([^=]*)$");
     cmatch key_val_parts;
-    while (currentArgIndex != argc)
+    while (currentArgIndex < argc)
     {
         string key;
         string val;
@@ -188,6 +184,16 @@ void getArgs(distance_type & distanceMeasure,
             currentArgIndex += 2;
         }
     }
+    if (inputFile.length() == 0)
+    {
+        cerr << "Please specify input fasta file name." << endl;
+        usage(1);
+    }
+    if (outputFile.length() == 0)
+    {
+        cerr << "Please specify output file name." << endl;
+        usage(1);
+    }
 }
 
 
@@ -221,6 +227,11 @@ SequenceVectorPointer
 void output(const string & filename, SequenceVectorPointer contigs)
 {
     ofstream file(filename);
+    if (!file.is_open())
+    {
+        cerr << "Problem occurred in opening file for output." << endl;
+        exit(1);
+    }
     file << contigs;
     for (int j = 0; j < contigs->size(); j++)
     {
