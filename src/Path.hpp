@@ -23,10 +23,9 @@ namespace FireflyAssembler
             void validatePath() const;
 
         public:
-            template <typename inputIterator>
+
             Path(const Graph & g,
-                    inputIterator first,
-                    inputIterator last);
+                    const std::vector<int> & p);
             Path(const Path & other);
 
             Path & operator = (const Path & other);
@@ -41,13 +40,7 @@ namespace FireflyAssembler
     };
     std::ostream & operator << (std::ostream & s, const Path & p);
 
-    template <typename inputIterator>
-    Path::Path(const Graph & g,
-                        inputIterator first,
-                        inputIterator last) : pathGraph(&g),
-                        path(first, last)
-    {
-    }
+
 
     typedef std::shared_ptr<Path> PathPointer;
 }

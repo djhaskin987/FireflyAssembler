@@ -40,11 +40,23 @@ void Path::validatePath() const
             throw out_of_range(ss.str());
         }
     }
+    HashSet<int> uniqueIndices(path.begin(),path.end());
+    if (uniqueIndices.size() < path.size())
+    {
+        throw runtime_error("Each path must have unique indices");
+    }
 }
 
-Path::Path(const Path & other)
+Path::Path(const Graph & g,
+        const std::vector<int> & p) : pathGraph(&g),
+                    path(p)
 {
-    copy(other);
+    validatePath();
+}
+
+Path::Path(const Path & other) : pathGraph(other.pathGraph),
+        path(other.path)
+{
 }
 
 Path & Path::operator = (const Path & other)
