@@ -45,7 +45,9 @@ SequenceVectorPointer deserializeSequences(string fileName)
         else
         {
             SequenceVector::iterator s = sequences->end() - 1;
+            cout << "New Sequence: " << line << endl;
             s->append(line);
+
         }
     }
     in.close();
@@ -194,7 +196,7 @@ SequenceVectorPointer
     eliminateContains(const SequenceVector & sequences)
 {
 
-    SequenceVectorPointer returned(new SequenceVector(sequences));
+    SequenceVectorPointer returned(new SequenceVector());
     for (int i = 0; i < sequences.size(); i++)
     {
         bool isIContainedAnywhere = false;
@@ -303,6 +305,7 @@ int main(int argc, char * argv[])
         for (int i = 0; i < sequences->size(); i++)
         {
             cout << "    Loading Sequence #" << (i + 1) << " into graph..." << endl;
+            cout << "    " << (*sequences)[i] << endl;
             graph.addSequence((*sequences)[i]);
             cout << "      Done." << endl;
         }
