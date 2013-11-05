@@ -90,6 +90,11 @@ void getArgs(distance_type & distanceMeasure,
         int argc,
         char *argv[])
 {
+    if (argc < 3)
+    {
+        cerr << "Not enough arguments." << endl;
+        usage(1);
+    }
     int currentArgIndex = 1;
     cmatch parts;
     regex keyValOption("^([^=]*)=([^=]*)$");
@@ -276,6 +281,12 @@ int main(int argc, char * argv[])
             break;
     };
 
+    // This do loop is how we deal with 'contains' problem, where one sequence
+    // may contain another.
+    // We pre-process for contigs containing other contigs and get rid of those
+    // ones which are contained.
+    // Then we merge based on overlaps.
+    // We continue until the merge process stops giving good results.
     SequenceVectorPointer
         contigs(deserializeSequences(inputFile));
     SequenceVectorPointer sequences;
