@@ -40,12 +40,6 @@ void Path::validatePath() const
             throw out_of_range(ss.str());
         }
     }
-    unordered_set<int> pathIndexes(path.begin(), path.end());
-    if (pathIndexes.size() != path.size())
-    {
-        throw logic_error("Each index must be visited in the graph exactly once");
-    }
-
 }
 
 Path::Path(const Path & other)
