@@ -1,5 +1,4 @@
 #include "Sequence.hpp"
-#include "Algorithms.hpp"
 #include <stdexcept>
 #include <limits>
 #include <iostream>
