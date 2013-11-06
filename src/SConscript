@@ -8,6 +8,7 @@ prod = Environment()
 prod.Append(CCFLAGS = ['-O0','-g','-std=c++11','-Werror'])
 prod.Append(CFLAGS = ['-std=c++11','-Werror'])
 prod.Append(LINKFLAGS = ['-std=c++11','-Werror'])
+prod.Append(LINKFLAGS = ['-lboost_regex'])
 prod.Append(LIBPATH = [libraryPath])
 mainSources = sources
 mainSources.append('FireflyAssembler-main.cpp')

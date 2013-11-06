@@ -1,5 +1,6 @@
 #include "GreedyPathFinder.hpp"
 #include <queue>
+#include <iostream>
 #include <limits>
 #include "Types.hpp"
 
@@ -9,6 +10,8 @@ using namespace std;
 PathPointer GreedyPathFinder::findPath(const Graph & graph,
         FitnessFunctionPointer ff)
 {
+    cout << "Graph size: " << graph.sequenceCount() << endl;
+    cout << flush;
     if (graph.sequenceCount() == 1)
     {
         vector<int> path(1);
@@ -104,7 +107,7 @@ PathPointer GreedyPathFinder::findPath(const Graph & graph,
 
 VectorPointer<int> GreedyPathFinder::getPathFromMap(const HashMap<int,int> & map, int start)
 {
-    int pathSize = map.size() - 1;
+    int pathSize = map.size();
     VectorPointer<int> vecPtr(new vector<int>());
     int currentIndex = start;
     for (int i = 0; i < pathSize; i++)

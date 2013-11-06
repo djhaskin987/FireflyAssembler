@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include <regex>
+#include <boost/regex.hpp>
 #include "Sequence.hpp"
 #include "Types.hpp"
 #include "Graph.hpp"
@@ -11,6 +11,7 @@
 #include "MeanOverlap.hpp"
 
 using namespace std;
+using namespace boost;
 using namespace FireflyAssembler;
 typedef VectorPointer<FireflyAssembler::Sequence>
     SequenceVectorPointer;
@@ -93,7 +94,7 @@ void getArgs(distance_type & distanceMeasure,
 {
     int currentArgIndex = 1;
     cmatch parts;
-    regex keyValOption("^([^=]*)=([^=]*)$");
+    regex keyValOption("^([^=]+)=([^=]+)$");
     cmatch key_val_parts;
     while (currentArgIndex < argc)
     {
