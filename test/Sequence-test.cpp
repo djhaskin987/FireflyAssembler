@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(Sequence_basic_test)
     BOOST_CHECK(a.length() == 45);
     stringstream out;
     out << a;
-    BOOST_CHECK(out.str()->length() == 45);
+    BOOST_CHECK(out.str().length() == 45);
 }
 
 BOOST_AUTO_TEST_CASE(Sequence_basic_overlap_test)

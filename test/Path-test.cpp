@@ -41,17 +41,24 @@ BOOST_AUTO_TEST_CASE(Path_basic_test)
     graph.addSequence(g[2]);
     graph.addSequence(g[3]);
     graph.addSequence(g[4]);
-    int forward[] = {0,1,2,3,4};
-    int * ptr = &forward[0];
-    int backward[] = {4,3,2,1,0};
-    int * btr = &backward[0];
+    vector<int> forward;
+    forward.push_back(0);
+    forward.push_back(1);
+    forward.push_back(2);
+    forward.push_back(3);
+    forward.push_back(4);
+    vector<int> backward;
+    backward.push_back(4);
+    backward.push_back(3);
+    backward.push_back(2);
+    backward.push_back(1);
+    backward.push_back(0);
     Path p(graph,
-            ptr,ptr+5);
+            forward);
     VectorPointer<Sequence> ss = p.getContigs();
     BOOST_CHECK(ss->size() == 2);
     Path r(graph,
-            btr,
-            btr+5);
+            backward);
     ss = r.getContigs();
     BOOST_CHECK(ss->size() == 5);
 }
