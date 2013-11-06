@@ -20,3 +20,4 @@
 # Building
 build-*/
 nbproject/
+*.orig

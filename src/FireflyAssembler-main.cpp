@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
-#include <regex>
-#include "Types.hpp"
+#include <algorithm>
+#include <boost/regex.hpp>
+#include <boost/program_options.hpp>
 #include "Sequence.hpp"
+#include "Types.hpp"
 #include "Graph.hpp"
 #include "Path.hpp"
 #include "FitnessFunction.hpp"
@@ -11,17 +13,24 @@
 
 using namespace std;
 using namespace FireflyAssembler;
+using namespace boost;
+typedef VectorPointer<FireflyAssembler::Sequence>
+    SequenceVectorPointer;
+typedef vector<FireflyAssembler::Sequence> SequenceVector;
+using Sequence = FireflyAssembler::Sequence;
 
-VectorPointer<Sequence> deserializeSequences(string fileName)
+
+SequenceVectorPointer deserializeSequences(string fileName)
 {
-    regex beginningOfSequence("^>.*");
-    VectorPointer<Sequence> sequences(new vector<Sequence>());
+    boost::regex beginningOfSequence("^>.*");
+    SequenceVectorPointer sequences(new SequenceVector());
 
     // Open file and create RecordReader.
     ifstream in(fileName.c_str());
     if (!in.is_open())
     {
-        cerr << "Problem occurred in opening file." << endl;
+        cerr << "Problem occurred in opening file for input." << endl;
+        exit(1);
     }
 
     // Read file record-wise.
@@ -30,57 +39,295 @@ VectorPointer<Sequence> deserializeSequences(string fileName)
     while (!in.eof())
     {
         getline(in,line);
-        if (regex_match(line, beginningOfSequence))
+        if (boost::regex_match(line, beginningOfSequence))
         {
-            sequences->push_back(Sequence());
+            sequences->push_back(FireflyAssembler::Sequence());
         }
         else
         {
-            vector<Sequence>::iterator s = sequences->end() - 1;
+            SequenceVector::iterator s = sequences->end() - 1;
+            cout << "New Sequence: " << line << endl;
             s->append(line);
+
         }
     }
     in.close();
     return sequences;
 }
 
-void usage()
+typedef enum
 {
-    cout << "Usage: FireflyAssembler <filename>" << endl
-         << "  This prints the contigs found in <filename> to standard out."
-            << endl;
-};
+    CAYLEY, HAMMING
+} distance_type;
 
-int main(int argc, char * argv[])
+typedef enum
 {
-    cout << "ARGC: " << argc << endl;
-    // TODO: Use Boost.program_options here later
-    // Add greedy-or-firefly assembler options
-    // Add fitness function options
-    // Add distance metric options
-    if (argc != 2)
-    {
-        usage();
-        return 1;
-    }
-    string filename(argv[1]);
-    VectorPointer<Sequence>
-        sequences(deserializeSequences(filename));
-    Graph graph;
-    // load graph
-    for (int i = 0; i < sequences->size(); i++)
-    {
-        graph.addSequence((*sequences)[i]);
-    }
+    MEAN_OVERLAP,
+    CONTIG_LENGTH
+} fitness_function_type;
 
-    PathFinderPointer pathFinder(new GreedyPathFinder());
-    FitnessFunctionPointer ff(new MeanOverlap());
-    VectorPointer<Sequence> contigs =
-        pathFinder->findPath(graph, ff)->getContigs();
+typedef enum
+{
+    GREEDY,
+    FIREFLY
+} path_finder_type;
+
+void usage(int exitCode)
+{
+    cout << "Usage: FireflyAssembler [<options>...] <input-fasta-file> <output-file>" << endl
+        << "  Where:" << endl
+        << "    -d, --distance-metric {cayley|hamming}" << endl
+        << "        Specify distance metric (default is hamming)" << endl
+        << "    -f, --fitness-function {meanoverlap|contiglength}" << endl
+        << "        Specify fitness funciton (default is 'meanoverlap')" << endl
+        << "    -p, --path-finder {greedy|firefly}" << endl
+        << "        Specify path finder (default is greedy)" << endl;
+    exit(exitCode);
+}
+
+void getArgs(distance_type & distanceMeasure,
+        fitness_function_type & ffType,
+        path_finder_type & pfType,
+        string & inputFile,
+        string & outputFile,
+        int argc,
+        char *argv[])
+{
+    int currentArgIndex = 1;
+    cmatch parts;
+    regex keyValOption("^([^=]*)=([^=]*)$");
+    cmatch key_val_parts;
+    while (currentArgIndex < argc)
+    {
+        string key;
+        string val;
+        if (regex_match(argv[currentArgIndex], key_val_parts, keyValOption))
+        {
+            key = key_val_parts[1];
+            val = key_val_parts[2];
+        }
+        else
+        {
+            key = argv[currentArgIndex];
+            if (currentArgIndex + 1 < argc)
+            {
+                val = argv[currentArgIndex + 1];
+            }
+            else
+            {
+                val = "";
+            }
+        }
+        if (key == "-h" || key == "--help")
+        {
+            usage(0);
+        }
+        else if (key == "-d" || key == "--distance-metric")
+        {
+            if (val == "cayley")
+            {
+                distanceMeasure = CAYLEY;
+            }
+            else if (val == "hamming")
+            {
+                distanceMeasure = HAMMING;
+            }
+            else
+            {
+                cerr << "Invalid distance measure type '"
+                     << argv[++currentArgIndex] << "'." << endl;
+                usage(1);
+            }
+            currentArgIndex += 2;
+        }
+        else if (key == "-f" || key == "--fitness-function")
+        {
+            if (val == "meanoverlap")
+            {
+                ffType = MEAN_OVERLAP;
+            }
+            else if (val == "contiglength")
+            {
+                ffType = CONTIG_LENGTH;
+            }
+            else
+            {
+                cerr << "Invalid fitness function type '"
+                     << argv[++currentArgIndex] << "'." << endl;
+                usage(1);
+            }
+            currentArgIndex += 2;
+        }
+        else if (key == "-p" || key == "--path-finder")
+        {
+            if (val == "greedy")
+            {
+                pfType = GREEDY;
+            }
+            else if (val == "firefly")
+            {
+                pfType = FIREFLY;
+            }
+            else
+            {
+                cerr << "Invalid path finder type '"
+                     << argv[++currentArgIndex] << "'."
+                     << endl;
+                usage(1);
+            }
+            currentArgIndex += 2;
+        }
+        else
+        {
+            inputFile = key;
+            outputFile = val;
+            currentArgIndex += 2;
+        }
+    }
+    if (inputFile.length() == 0)
+    {
+        cerr << "Please specify input fasta file name." << endl;
+        usage(1);
+    }
+    if (outputFile.length() == 0)
+    {
+        cerr << "Please specify output file name." << endl;
+        usage(1);
+    }
+}
+
+
+
+SequenceVectorPointer
+    eliminateContains(const SequenceVector & sequences)
+{
+
+    SequenceVectorPointer returned(new SequenceVector());
+    for (int i = 0; i < sequences.size(); i++)
+    {
+        bool isIContainedAnywhere = false;
+        for (int j = 0; j < sequences.size(); j++)
+        {
+            if (i == j)
+                continue;
+            if (sequences[i].containsSize(sequences[j]) > 0)
+            {
+                isIContainedAnywhere = true;
+                break;
+            }
+        }
+        if (!isIContainedAnywhere)
+        {
+            returned->push_back(sequences[i]);
+        }
+    }
+    return returned;
+}
+
+void output(const string & filename, SequenceVectorPointer contigs)
+{
+    ofstream file(filename);
+    if (!file.is_open())
+    {
+        cerr << "Problem occurred in opening file for output." << endl;
+        exit(1);
+    }
+    file << contigs;
     for (int j = 0; j < contigs->size(); j++)
     {
         cout << (*contigs)[j] << endl;
     }
+    file.close();
+}
+
+int main(int argc, char * argv[])
+{
+    string inputFile = "";
+    string outputFile = "";
+    distance_type distanceMeasure = HAMMING;
+    fitness_function_type ffType = MEAN_OVERLAP;
+    path_finder_type pfType = GREEDY;
+    getArgs(distanceMeasure,
+            ffType,
+            pfType,
+            inputFile,
+            outputFile,
+            argc,
+            argv);
+
+/*
+    DistanceMetricPointer dm;
+    switch (distanceMeasure)
+    {
+        case HAMMING:
+            dm = new HammingDistanceMetric();
+            break;
+        case CAYLEY:
+            dm = new CayleyDistanceMetric();
+            break;
+        default:
+            throw logic_error("internal state is faulty. Cannot continue.");
+            break;
+    };
+    */
+    FitnessFunctionPointer fitnessFunction;
+    switch (ffType)
+    {
+        // TODO: Fully implement this
+        case CONTIG_LENGTH:
+        case MEAN_OVERLAP:
+            fitnessFunction.reset(new MeanOverlap());
+            break;
+        default:
+            throw logic_error("internal state is faulty. Cannot continue.");
+            break;
+    };
+    PathFinderPointer pathFinder;
+    switch (pfType)
+    {
+        case FIREFLY:
+        case GREEDY:
+            pathFinder.reset(new GreedyPathFinder());
+            break;
+        default:
+            throw logic_error("internal state is faulty. Cannot continue.");
+            break;
+    };
+
+    // This do loop is how we deal with 'contains' problem, where one sequence
+    // may contain another.
+    // We pre-process for contigs containing other contigs and get rid of those
+    // ones which are contained.
+    // Then we merge based on overlaps.
+    // We continue until the merge process stops giving good results.
+    SequenceVectorPointer
+        contigs(deserializeSequences(inputFile));
+    SequenceVectorPointer sequences;
+    do {
+        sequences = contigs;
+        // preprocess sequences here
+        cout << "Eliminating 'contain' duplicates, if any..." << endl;
+        sequences = eliminateContains(*sequences);
+        cout << "  Done eliminating contain duplicates." << endl;
+        cout << "Merging Overlaps..." << endl;
+        Graph graph;
+        cout << "  Loading Graph..." << endl;
+        // load graph
+        for (int i = 0; i < sequences->size(); i++)
+        {
+            cout << "    Loading Sequence #" << (i + 1) << " into graph..." << endl;
+            cout << "    " << (*sequences)[i] << endl;
+            graph.addSequence((*sequences)[i]);
+            cout << "      Done." << endl;
+        }
+        cout << "    Done loading Graph." << endl;
+        cout << "  Getting contigs..." << endl;
+        contigs = pathFinder->findPath(graph, fitnessFunction)->getContigs();
+        cout << "    Done getting contigs.  Found " << contigs->size()
+                << " contigs." << endl;
+    } while (sequences->size() > contigs->size());
+
+    output(outputFile,contigs);
 
     return 0;
 }

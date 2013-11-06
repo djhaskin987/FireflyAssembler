@@ -7,7 +7,7 @@ using namespace FireflyAssembler;
 using namespace std;
 
 // allow 5% error in the overlap (ish)
-int Sequence::MINIMUM_OVERLAP = 5;
+int Sequence::MINIMUM_MATCH = 5;
 double Sequence::TOLERANCE_SCORE = .05;
 const int Sequence::INSERT_SCORE = 3;
 const int Sequence::DELETE_SCORE = 3;
@@ -146,6 +146,97 @@ int Sequence::getScore(const vector<char> & a,
     return matrix[b.size()][a.size()];
 }
 
+int Sequence::containsSize(const Sequence & other) const
+{
+    int minAOffset = 0;
+    int minAEnd = 0;
+    int maxContains = 0;
+    double minScore = numeric_limits<double>::infinity();
+    for (int aOffset = 0; aOffset < sequence.size(); aOffset++)
+    {
+        for (int aEnd = sequence.size();
+                aEnd > aOffset;
+                aEnd--)
+        {
+            vector<char> aSegment;
+            vector<char> bSegment = other.sequence;
+
+            aSegment.insert(aSegment.end(),
+                    sequence.begin() + aOffset,
+                    sequence.begin() + aEnd);
+
+
+            int aContainSize = aEnd - aOffset;
+            int bContainSize = other.sequence.size();
+            // take the max of the two contain sizes
+            int containSize = aContainSize > bContainSize ? aContainSize :
+                bContainSize;
+            double segmentScore = scoreShortcut(aSegment, bSegment);
+
+            // code for under-the-bar longest
+            // if (segmentScore < Sequence::TOLERANCE_SCORE)
+            // {
+            //     if (overlapSize > maxContains)
+            //     {
+            //         maxContains = overlapSize;
+            //         minAOffset = aOffset;
+            //         minAEnd = aEnd;
+            //     }
+            // }
+
+            // code for smallest error, which says
+            // that it is more unlikely that overlaps of size 'n'
+            // exist and are under tolerance are the correct overlap
+            // than that long segments under tolerance are the correct
+            // overlap
+            if (segmentScore < minScore &&
+                    containSize > Sequence::MINIMUM_MATCH)
+
+            {
+                minScore = segmentScore;
+                minAOffset = aOffset;
+                minAEnd = aEnd;
+            }
+        }
+    }
+    if (minScore > Sequence::TOLERANCE_SCORE)
+    {
+        return 0;
+    }
+    // returns the number of codons in THIS sequence in the overlap.
+    // we intentionally omit returning bEnd here, since it is not used
+    return minAEnd - minAOffset;
+}
+
+double Sequence::scoreShortcut(const vector<char> & a,
+        const vector<char> & b) const
+{
+
+    int indels;
+    if (a.size() > b.size())
+    {
+       indels = b.size() - a.size();
+    }
+    else
+    {
+       indels = a.size() - b.size();
+    }
+    int overlaySize = a.size() > b.size() ? a.size() : b.size();
+    double minScore = (double)(indels * Sequence::INSERT_SCORE) / overlaySize;
+    if (minScore >= Sequence::TOLERANCE_SCORE)
+    {
+        return numeric_limits<double>::infinity();
+    }
+    int segmentRawScore = getScore(a, b);
+    // decision made: score with smallest error, or
+    // score with under-tolerance error that's the longest?
+
+    double segmentScore = ((double)segmentRawScore) /
+        ((double)overlaySize);
+    return segmentScore;
+}
+
+
 int Sequence::determineOverlap(const Sequence & other) const
 {
     int minAOffset = 0;
@@ -167,17 +258,14 @@ int Sequence::determineOverlap(const Sequence & other) const
             bSegment.insert(bSegment.end(),
                     other.sequence.begin(),
                     other.sequence.begin() + bEnd);
-            int segmentRawScore(getScore(aSegment, bSegment));
-            // decision made: score with smallest error, or
-            // score with under-tolerance error that's the longest?
 
-            double segmentScore = ((double)segmentRawScore) /
-                ((double)aSegment.size());
             int aOverlapSize = sequence.size() - aOffset;
             int bOverlapSize = bEnd;
-            // take the max of the two overlap sizes
             int overlapSize = aOverlapSize > bOverlapSize ? aOverlapSize :
                 bOverlapSize;
+            double segmentScore = scoreShortcut(aSegment,
+                    bSegment);
+            // take the max of the two overlap sizes
 
             // code for under-the-bar longest
             // if (segmentScore < Sequence::TOLERANCE_SCORE)
@@ -196,7 +284,7 @@ int Sequence::determineOverlap(const Sequence & other) const
             // than that long segments under tolerance are the correct
             // overlap
             if (segmentScore < minScore &&
-                    overlapSize > Sequence::MINIMUM_OVERLAP)
+                    overlapSize > Sequence::MINIMUM_MATCH)
 
             {
                 minScore = segmentScore;

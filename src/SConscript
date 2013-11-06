@@ -8,7 +8,7 @@ sources = ['Types.hpp', \
     'PathFinder.hpp', \
     'GreedyPathFinder.hpp', 'GreedyPathFinder.cpp']
 prod = Environment()
-prod.Append(CCFLAGS = ['-O3','-std=c++11','-Werror'])
+prod.Append(CCFLAGS = ['-O0','-g','-std=c++11','-Werror'])
 prod.Append(CFLAGS = ['-std=c++11','-Werror'])
 prod.Append(LINKFLAGS = ['-std=c++11','-Werror'])
 prod.Append(LINKFLAGS = ['-lboost_regex'])
