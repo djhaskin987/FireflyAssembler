@@ -1,8 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include <boost/regex.hpp>
-#include <boost/program_options.hpp>
+#include <regex>
 #include "Sequence.hpp"
 #include "Types.hpp"
 #include "Graph.hpp"
@@ -13,7 +12,6 @@
 
 using namespace std;
 using namespace FireflyAssembler;
-using namespace boost;
 typedef VectorPointer<FireflyAssembler::Sequence>
     SequenceVectorPointer;
 typedef vector<FireflyAssembler::Sequence> SequenceVector;
@@ -22,7 +20,7 @@ using Sequence = FireflyAssembler::Sequence;
 
 SequenceVectorPointer deserializeSequences(string fileName)
 {
-    boost::regex beginningOfSequence("^>.*");
+    regex beginningOfSequence("^>.*");
     SequenceVectorPointer sequences(new SequenceVector());
 
     // Open file and create RecordReader.
@@ -39,7 +37,7 @@ SequenceVectorPointer deserializeSequences(string fileName)
     while (!in.eof())
     {
         getline(in,line);
-        if (boost::regex_match(line, beginningOfSequence))
+        if (regex_match(line, beginningOfSequence))
         {
             sequences->push_back(FireflyAssembler::Sequence());
         }
