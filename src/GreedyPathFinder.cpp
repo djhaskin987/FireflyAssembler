@@ -7,12 +7,12 @@
 using namespace FireflyAssembler;
 using namespace std;
 
-PathPointer GreedyPathFinder::findPath(const Graph & graph,
+PathPointer GreedyPathFinder::findPath(IGraphConstPointer graph,
         FitnessFunctionPointer ff)
 {
-    cout << "Graph size: " << graph.sequenceCount() << endl;
+    cout << "Graph size: " << graph->sequenceCount() << endl;
     cout << flush;
-    if (graph.sequenceCount() == 1)
+    if (graph->sequenceCount() == 1)
     {
         vector<int> path(1);
         path.push_back(0);
@@ -23,14 +23,14 @@ PathPointer GreedyPathFinder::findPath(const Graph & graph,
     {
         priority_queue<pair<int,pair<int,int> > >
             edgeQueue;
-        for (int a = 0; a < graph.sequenceCount(); a++)
+        for (int a = 0; a < graph->sequenceCount(); a++)
         {
-            for (int b = 0; b < graph.sequenceCount(); b++)
+            for (int b = 0; b < graph->sequenceCount(); b++)
             {
                 if (a == b) continue;
-                if (graph.hasOverlap(a,b))
+                if (graph->hasOverlap(a,b))
                 {
-                    edgeQueue.push(make_pair(graph.getOverlap(a,b),
+                    edgeQueue.push(make_pair(graph->getOverlap(a,b),
                                 make_pair(a,b)));
                 }
                 else
@@ -72,7 +72,7 @@ PathPointer GreedyPathFinder::findPath(const Graph & graph,
         int from = -1;
         int to = -1;
 
-        for (int i = 0; i < graph.sequenceCount(); i++)
+        for (int i = 0; i < graph->sequenceCount(); i++)
         {
             if (fromVisited.find(i) == fromVisited.end())
             {
@@ -89,7 +89,7 @@ PathPointer GreedyPathFinder::findPath(const Graph & graph,
 
         PathPointer bestPath;
         double maxScore = -numeric_limits<double>::infinity();
-        for (int i = 0; i < graph.sequenceCount(); i++)
+        for (int i = 0; i < graph->sequenceCount(); i++)
         {
             VectorPointer<int> pathIndices = getPathFromMap(solution, i);
 

@@ -11,7 +11,7 @@ namespace FireflyAssembler
             VectorPointer<int> getPathFromMap(const HashMap<int,int> & map, int start);
 
         public:
-            virtual PathPointer findPath(const Graph & graph,
+            virtual PathPointer findPath(IGraphConstPointer graph,
                     FitnessFunctionPointer ff);
     };
 }

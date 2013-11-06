@@ -309,14 +309,14 @@ int main(int argc, char * argv[])
         sequences = eliminateContains(*sequences);
         cout << "  Done eliminating contain duplicates." << endl;
         cout << "Merging Overlaps..." << endl;
-        Graph graph;
+        IGraphPointer graph(new Graph());
         cout << "  Loading Graph..." << endl;
         // load graph
         for (int i = 0; i < sequences->size(); i++)
         {
             cout << "    Loading Sequence #" << (i + 1) << " into graph..." << endl;
             cout << "    " << (*sequences)[i] << endl;
-            graph.addSequence((*sequences)[i]);
+            graph->addSequence((*sequences)[i]);
             cout << "      Done." << endl;
         }
         cout << "    Done loading Graph." << endl;

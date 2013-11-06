@@ -2,7 +2,7 @@
 #define __FireflyAssemblerPath__
 #include "Types.hpp"
 #include "Sequence.hpp"
-#include "Graph.hpp"
+#include "IGraph.hpp"
 #include <ostream>
 #include <memory>
 #include <vector>
@@ -14,7 +14,7 @@ namespace FireflyAssembler
     class Path
     {
         private:
-            const Graph * pathGraph;
+            IGraphConstPointer pathGraph;
             std::vector<int> path;
 
             void free();
@@ -24,7 +24,7 @@ namespace FireflyAssembler
 
         public:
 
-            Path(const Graph & g,
+            Path(IGraphConstPointer g,
                     const std::vector<int> & p);
             Path(const Path & other);
 
@@ -32,15 +32,13 @@ namespace FireflyAssembler
 
             ~Path();
 
-            const Graph & getGraph() const;
+            IGraphConstPointer getGraph() const;
             int size() const;
             int operator [] (int index) const;
 
             VectorPointer<Sequence> getContigs() const;
     };
     std::ostream & operator << (std::ostream & s, const Path & p);
-
-
 
     typedef std::shared_ptr<Path> PathPointer;
 }
