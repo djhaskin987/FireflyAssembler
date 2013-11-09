@@ -3,6 +3,7 @@
 
 #include "Types.hpp"
 #include "Path.hpp"
+#include "IGraph.hpp"
 #include "FitnessFunction.hpp"
 
 namespace FireflyAssembler
@@ -10,7 +11,7 @@ namespace FireflyAssembler
     class PathFinder
     {
         public:
-            virtual FireflyAssembler::PathPointer findPath(const Graph & graph,
+            virtual FireflyAssembler::PathPointer findPath(IGraphConstPointer graph,
                     FitnessFunctionPointer ff) = 0;
     };
     typedef std::shared_ptr<PathFinder>

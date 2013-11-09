@@ -51,6 +51,7 @@ then
         public:
     };
     typedef std::shared_ptr<${class}> ${class}Pointer;
+    typedef std::shared_ptr<const ${class}> ${class}ConstPointer;
 }
 #endif
 HERE
@@ -79,6 +80,7 @@ else
             virtual ~${class}();
     };
     typedef std::shared_ptr<${class}> ${class}Pointer;
+    typedef std::shared_ptr<const ${class}> ${class}ConstPtr;
 }
 
 #endif

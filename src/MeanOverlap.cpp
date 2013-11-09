@@ -6,11 +6,11 @@ using namespace std;
 double MeanOverlap::getOverlapPercentage(const Path & path, int a, int b) const
 {
     double returned = 0.0;
-    const Graph & g = path.getGraph();
+    IGraphConstPointer g = path.getGraph();
 
-    if (g.hasOverlap(a,b))
+    if (g->hasOverlap(a,b))
     {
-        returned = (double)g.getOverlap(a,b) / (double)g.getSequence(a).length();
+        returned = (double)g->getOverlap(a,b) / (double)g->getSequence(a).length();
     }
     return returned;
 }

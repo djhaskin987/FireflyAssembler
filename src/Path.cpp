@@ -8,8 +8,6 @@ using namespace std;
 
 void Path::free()
 {
-    pathGraph = NULL;
-
 }
 
 void Path::copy(const Path & other)
@@ -20,7 +18,7 @@ void Path::copy(const Path & other)
 
 void Path::validatePath() const
 {
-    if (pathGraph == NULL)
+    if (pathGraph.get() == NULL)
     {
         throw logic_error("path's graph pointer is null.");
     }
@@ -47,8 +45,8 @@ void Path::validatePath() const
     }
 }
 
-Path::Path(const Graph & g,
-        const std::vector<int> & p) : pathGraph(&g),
+Path::Path(IGraphConstPointer g,
+        const std::vector<int> & p) : pathGraph(g),
                     path(p)
 {
     validatePath();
@@ -73,9 +71,9 @@ Path::~Path()
     free();
 }
 
-const Graph & Path::getGraph() const
+IGraphConstPointer Path::getGraph() const
 {
-    return *pathGraph;
+    return pathGraph;
 }
 
 int Path::size() const
