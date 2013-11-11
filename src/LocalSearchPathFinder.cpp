@@ -22,11 +22,13 @@ PathPointer LocalSearchPathFinder::findPath(IGraphConstPointer graph,
     {
         PathFinderPointer greedy(new GreedyPathFinder());
         PathPointer initial = greedy->findPath(graph,ff);
-        vector<int> triedPath(graph->sequenceCount());
+        vector<int> triedPath;
         for (int i = 0; i < graph->sequenceCount(); i++)
         {
             triedPath.push_back((*initial)[i]);
         }
+        cout << "Graph size: " << graph->sequenceCount() << endl;
+        cout << "path size: " << triedPath.size() << endl;
 
         double currentScore = ff->rate(Path(graph, triedPath));
         double bestScore = -numeric_limits<double>::infinity();
