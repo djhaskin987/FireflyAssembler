@@ -15,7 +15,7 @@ double fitnessFunction(double x, double y) {
     double x2 = x*x;
     double y2 = y*y;
     double sum = sqrt(x2 + y2);
-    double f = sin(10.0*sum)/10.0*exp(-sum/100.0)/sum;
+    double f = 10*sin(sum/10.0)/sum;
     if( f < 0 )
     	return 0;
     return f;
