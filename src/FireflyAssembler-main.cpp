@@ -10,6 +10,8 @@
 #include "GreedyPathFinder.hpp"
 #include "LocalSearchPathFinder.hpp"
 #include "MeanOverlap.hpp"
+#include "DistanceMetric.hpp"
+#include "HammingDistance.hpp"
 
 using namespace std;
 using namespace boost;
