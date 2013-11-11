@@ -13,6 +13,7 @@ namespace FireflyAssembler
         public:
             virtual FireflyAssembler::PathPointer findPath(IGraphConstPointer graph,
                     FitnessFunctionPointer ff) = 0;
+            virtual ~PathFinder() {}
     };
     typedef std::shared_ptr<PathFinder>
         PathFinderPointer;

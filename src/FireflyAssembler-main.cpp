@@ -8,6 +8,7 @@
 #include "Path.hpp"
 #include "FitnessFunction.hpp"
 #include "GreedyPathFinder.hpp"
+#include "LocalSearchPathFinder.hpp"
 #include "MeanOverlap.hpp"
 
 using namespace std;
@@ -68,7 +69,8 @@ typedef enum
 typedef enum
 {
     GREEDY,
-    FIREFLY
+    FIREFLY,
+    LOCAL
 } path_finder_type;
 
 void usage(int exitCode)
@@ -79,7 +81,7 @@ void usage(int exitCode)
         << "        Specify distance metric (default is hamming)" << endl
         << "    -f, --fitness-function {meanoverlap|contiglength}" << endl
         << "        Specify fitness funciton (default is 'meanoverlap')" << endl
-        << "    -p, --path-finder {greedy|firefly}" << endl
+        << "    -p, --path-finder {greedy|firefly|localsearch}" << endl
         << "        Specify path finder (default is greedy)" << endl;
     exit(exitCode);
 }
@@ -166,6 +168,10 @@ void getArgs(distance_type & distanceMeasure,
             else if (val == "firefly")
             {
                 pfType = FIREFLY;
+            }
+            else if (val == "localsearch")
+            {
+                pfType = LOCAL;
             }
             else
             {
@@ -287,6 +293,9 @@ int main(int argc, char * argv[])
         case FIREFLY:
         case GREEDY:
             pathFinder.reset(new GreedyPathFinder());
+            break;
+        case LOCAL:
+            pathFinder.reset(new LocalSearchPathFinder());
             break;
         default:
             throw logic_error("internal state is faulty. Cannot continue.");

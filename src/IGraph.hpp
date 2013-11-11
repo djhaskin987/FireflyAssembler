@@ -21,6 +21,7 @@ namespace FireflyAssembler
 
             virtual HashSetPointer<int> getSources() const = 0;
             virtual HashSetPointer<int> getSinks() const = 0;
+            virtual ~IGraph() {}
     };
     typedef std::shared_ptr<IGraph> IGraphPointer;
     typedef std::shared_ptr<const IGraph> IGraphConstPointer;

@@ -10,6 +10,7 @@ namespace FireflyAssembler
     {
         public:
             virtual double rate(const Path & path) const = 0;
+            virtual ~FitnessFunction() {}
     };
     typedef std::shared_ptr<FitnessFunction> FitnessFunctionPointer;
     typedef std::shared_ptr<const FitnessFunction> FitnessFunctionConstPointer;

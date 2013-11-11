@@ -30,9 +30,9 @@ namespace FireflyAssembler
 
             Path & operator = (const Path & other);
 
-            ~Path();
+            virtual ~Path();
 
-            IGraphConstPointer getGraph() const;
+            virtual IGraphConstPointer getGraph() const;
             int size() const;
             int operator [] (int index) const;
 
