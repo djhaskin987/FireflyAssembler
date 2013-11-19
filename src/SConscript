@@ -1,4 +1,4 @@
-libraryPath = '/usr/lib'
+libraryPaths = [ '/usr/lib', '/usr/local/lib' ]
 sources = ['Sequence.cpp', \
     'Graph.cpp', \
     'Path.cpp', \
@@ -10,8 +10,7 @@ prod = Environment()
 prod.Append(CCFLAGS = ['-O0','-g','-std=c++11','-Werror'])
 prod.Append(CFLAGS = ['-std=c++11','-Werror'])
 prod.Append(LINKFLAGS = ['-std=c++11','-Werror'])
-prod.Append(LINKFLAGS = ['-lboost_regex'])
-prod.Append(LIBPATH = [libraryPath])
+prod.Append(LIBPATH = libraryPaths)
 mainSources = sources
 mainSources.append('FireflyAssembler-main.cpp')
 program = prod.Program('FireflyAssembler', mainSources)

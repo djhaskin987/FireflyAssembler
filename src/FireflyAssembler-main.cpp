@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include <boost/regex.hpp>
+#include <regex>
 #include "Sequence.hpp"
 #include "Types.hpp"
 #include "Graph.hpp"
@@ -14,7 +14,6 @@
 #include "HammingDistance.hpp"
 
 using namespace std;
-using namespace boost;
 using namespace FireflyAssembler;
 typedef VectorPointer<FireflyAssembler::Sequence>
     SequenceVectorPointer;
@@ -24,7 +23,6 @@ using Sequence = FireflyAssembler::Sequence;
 
 SequenceVectorPointer deserializeSequences(string fileName)
 {
-    regex beginningOfSequence("^>.*");
     SequenceVectorPointer sequences(new SequenceVector());
 
     // Open file and create RecordReader.
@@ -41,7 +39,7 @@ SequenceVectorPointer deserializeSequences(string fileName)
     while (!in.eof())
     {
         getline(in,line);
-        if (regex_match(line, beginningOfSequence))
+        if ( line[0] == '>' )
         {
             sequences->push_back(FireflyAssembler::Sequence());
         }
@@ -97,30 +95,19 @@ void getArgs(distance_type & distanceMeasure,
         char *argv[])
 {
     int currentArgIndex = 1;
-    cmatch parts;
-    regex keyValOption("^([^=]+)=([^=]+)$");
-    cmatch key_val_parts;
     while (currentArgIndex < argc)
     {
         string key;
         string val;
-        if (regex_match(argv[currentArgIndex], key_val_parts, keyValOption))
-        {
-            key = key_val_parts[1];
-            val = key_val_parts[2];
-        }
-        else
-        {
-            key = argv[currentArgIndex];
-            if (currentArgIndex + 1 < argc)
-            {
-                val = argv[currentArgIndex + 1];
-            }
-            else
-            {
-                val = "";
-            }
-        }
+		key = argv[currentArgIndex];
+		if (currentArgIndex + 1 < argc)
+		{
+			val = argv[currentArgIndex + 1];
+		}
+		else
+		{
+			val = "";
+		}
         if (key == "-h" || key == "--help")
         {
             usage(0);
