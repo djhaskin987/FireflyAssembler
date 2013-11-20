@@ -46,12 +46,23 @@ SequenceVectorPointer deserializeSequences(string fileName)
         else
         {
             SequenceVector::iterator s = sequences->end() - 1;
-            cout << "New Sequence: " << line << endl;
             s->append(line);
 
         }
     }
     in.close();
+    if (sequences->size() == 0)
+    {
+        cerr << "No sequences were found in file '" << fileName.c_str() << "'!"
+             << endl;
+        exit(1);
+    }
+    if (sequences->size() == 1)
+    {
+        cerr << "Only one sequence was found in file '"
+             << fileName.c_str() << "'. No assembly is needed." << endl;
+        exit(1);
+    }
     return sequences;
 }
 
@@ -226,10 +237,10 @@ void output(const string & filename, SequenceVectorPointer contigs)
         cerr << "Problem occurred in opening file for output." << endl;
         exit(1);
     }
-    file << contigs;
     for (int j = 0; j < contigs->size(); j++)
     {
-        cout << (*contigs)[j] << endl;
+        file << ">Contig " << j << endl;
+        file << (*contigs)[j] << endl;
     }
     file.close();
 }
@@ -299,8 +310,14 @@ int main(int argc, char * argv[])
     // We continue until the merge process stops giving good results.
     SequenceVectorPointer
         contigs(deserializeSequences(inputFile));
+
     SequenceVectorPointer sequences;
     do {
+        if (contigs->size() == 1)
+        {
+            cout << "Only one sequence left." << endl;
+            break;
+        }
         sequences = contigs;
         // preprocess sequences here
         cout << "Eliminating 'contain' duplicates, if any..." << endl;
@@ -313,7 +330,6 @@ int main(int argc, char * argv[])
         for (int i = 0; i < sequences->size(); i++)
         {
             cout << "    Loading Sequence #" << (i + 1) << " into graph..." << endl;
-            cout << "    " << (*sequences)[i] << endl;
             graph->addSequence((*sequences)[i]);
             cout << "      Done." << endl;
         }
