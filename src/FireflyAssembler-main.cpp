@@ -9,6 +9,7 @@
 #include "FitnessFunction.hpp"
 #include "GreedyPathFinder.hpp"
 #include "LocalSearchPathFinder.hpp"
+#include "FireflyPathFinder.hpp"
 #include "MeanOverlap.hpp"
 #include "DistanceMetric.hpp"
 #include "HammingDistance.hpp"
@@ -19,7 +20,6 @@ typedef VectorPointer<FireflyAssembler::Sequence>
     SequenceVectorPointer;
 typedef vector<FireflyAssembler::Sequence> SequenceVector;
 using Sequence = FireflyAssembler::Sequence;
-
 
 SequenceVectorPointer deserializeSequences(string fileName)
 {
@@ -273,6 +273,8 @@ int main(int argc, char * argv[])
             argc,
             argv);
 
+    DistanceMetricPointer dm;
+    dm.reset(new HammingDistance());
 /*
     DistanceMetricPointer dm;
     switch (distanceMeasure)
@@ -304,6 +306,8 @@ int main(int argc, char * argv[])
     switch (pfType)
     {
         case FIREFLY:
+        	pathFinder.reset(new FireflyPathFinder());
+        	break;
         case GREEDY:
             pathFinder.reset(new GreedyPathFinder());
             break;
@@ -348,7 +352,7 @@ int main(int argc, char * argv[])
         }
         cout << "    Done loading Graph." << endl;
         cout << "Getting contigs..." << endl;
-        contigs = pathFinder->findPath(graph, fitnessFunction)->getContigs();
+        contigs = pathFinder->findPath(graph, fitnessFunction, dm)->getContigs();
         cout << "  Done getting contigs.  Found " << contigs->size()
                 << " contigs." << endl;
     } while (sequences->size() > contigs->size());

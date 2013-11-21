@@ -12,7 +12,7 @@ namespace FireflyAssembler
 
         public:
             virtual PathPointer findPath(IGraphConstPointer graph,
-                    FitnessFunctionPointer ff);
+                    FitnessFunctionPointer ff, DistanceMetricPointer dm);
     };
 }
 

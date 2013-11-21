@@ -5,6 +5,7 @@
 #include "Path.hpp"
 #include "IGraph.hpp"
 #include "FitnessFunction.hpp"
+#include "DistanceMetric.hpp"
 
 namespace FireflyAssembler
 {
@@ -12,7 +13,7 @@ namespace FireflyAssembler
     {
         public:
             virtual FireflyAssembler::PathPointer findPath(IGraphConstPointer graph,
-                    FitnessFunctionPointer ff) = 0;
+                    FitnessFunctionPointer ff, DistanceMetricPointer dm) = 0;
             virtual ~PathFinder() {}
     };
     typedef std::shared_ptr<PathFinder>

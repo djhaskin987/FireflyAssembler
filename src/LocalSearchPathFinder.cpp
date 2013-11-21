@@ -9,7 +9,7 @@ using namespace FireflyAssembler;
 using namespace std;
 
 PathPointer LocalSearchPathFinder::findPath(IGraphConstPointer graph,
-        FitnessFunctionPointer ff)
+        FitnessFunctionPointer ff, DistanceMetricPointer dm)
 {
     if (graph->sequenceCount() == 1)
     {
@@ -21,7 +21,7 @@ PathPointer LocalSearchPathFinder::findPath(IGraphConstPointer graph,
     else
     {
         PathFinderPointer greedy(new GreedyPathFinder());
-        PathPointer initial = greedy->findPath(graph,ff);
+        PathPointer initial = greedy->findPath(graph,ff,dm);
         vector<int> triedPath;
         for (int i = 0; i < graph->sequenceCount(); i++)
         {

@@ -1,4 +1,5 @@
 #include "Path.hpp"
+#include "FitnessFunction.hpp"
 #include <sstream>
 #include <stdexcept>
 #include <unordered_set>
@@ -112,7 +113,28 @@ VectorPointer<Sequence> Path::getContigs() const
     return ss;
 }
 
-ostream & operator << (ostream & s, const Path & p)
+void Path::setRating(double rating)
+{
+	this->rating = rating;
+}
+
+double Path::getRating()
+{
+	return rating;
+}
+
+void Path::swapSequences(int index, int new_sequence)
+{
+    int new_index = 0;
+    for( int i=0 ; i<path.size() ; i++)
+        if (path[i] == new_sequence)
+            new_index = i;
+
+    path[new_index] = path[index];
+    path[index] = new_sequence;
+}
+
+ostream & operator << (ostream & s, Path const & p)
 {
     if (p.size() == 0)
     {

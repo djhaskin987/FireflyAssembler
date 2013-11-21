@@ -8,7 +8,7 @@ using namespace FireflyAssembler;
 using namespace std;
 
 PathPointer GreedyPathFinder::findPath(IGraphConstPointer graph,
-        FitnessFunctionPointer ff)
+        FitnessFunctionPointer ff, DistanceMetricPointer dm)
 {
     cout << "Graph size: " << graph->sequenceCount() << endl;
     cout << flush;

@@ -21,3 +21,9 @@
 build-*/
 nbproject/
 *.orig
+
+# Eclipse
+.cproject
+.externalToolBuilders/
+.project
+
