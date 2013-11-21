@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <cstdlib>
 #include "../src/Sequence.hpp"
+#include "BiggerSequencesFixture.hpp"
 using namespace FireflyAssembler;
 using namespace std;
 BOOST_AUTO_TEST_CASE(Sequence_basic_test)
@@ -74,4 +75,10 @@ BOOST_AUTO_TEST_CASE(Sequence_merge_test)
     int jkOverlap = j.determineOverlap(k);
     j.merge(k,jkOverlap);
     BOOST_CHECK(j.length() == 115);
+}
+
+BOOST_AUTO_TEST_CASE(Sequence_real_world_test)
+{
+    BiggerSequencesFixture s;
+    
 }

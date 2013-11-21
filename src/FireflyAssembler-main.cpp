@@ -45,9 +45,18 @@ SequenceVectorPointer deserializeSequences(string fileName)
         }
         else
         {
+            // trim the string
+            while (line.back() == '\r' || line.back() == '\n' ||
+                    line.back() == ' ' || line.back() == '\t')
+            {
+                line.pop_back();
+            }
+            if (line.size() == 0)
+            {
+                continue;
+            }
             SequenceVector::iterator s = sequences->end() - 1;
             s->append(line);
-
         }
     }
     in.close();
@@ -206,6 +215,8 @@ void getArgs(distance_type & distanceMeasure,
 SequenceVectorPointer
     eliminateContains(const SequenceVector & sequences)
 {
+    cout << "  Number of sequences prior to elimination: " << sequences.size()
+         << endl;
 
     SequenceVectorPointer returned(new SequenceVector());
     for (int i = 0; i < sequences.size(); i++)
@@ -226,6 +237,8 @@ SequenceVectorPointer
             returned->push_back(sequences[i]);
         }
     }
+    cout << "  Number of sequences after contains elimination: "
+         << returned->size() << endl;
     return returned;
 }
 
@@ -334,9 +347,9 @@ int main(int argc, char * argv[])
             cout << "      Done." << endl;
         }
         cout << "    Done loading Graph." << endl;
-        cout << "  Getting contigs..." << endl;
+        cout << "Getting contigs..." << endl;
         contigs = pathFinder->findPath(graph, fitnessFunction)->getContigs();
-        cout << "    Done getting contigs.  Found " << contigs->size()
+        cout << "  Done getting contigs.  Found " << contigs->size()
                 << " contigs." << endl;
     } while (sequences->size() > contigs->size());
 

@@ -34,13 +34,13 @@ using namespace std;
 BOOST_AUTO_TEST_CASE(Path_basic_test)
 {
     SmallSequencesFixture g;
-    Graph graph;
+    IGraphPointer graph(new Graph());
 
-    graph.addSequence(g[0]);
-    graph.addSequence(g[1]);
-    graph.addSequence(g[2]);
-    graph.addSequence(g[3]);
-    graph.addSequence(g[4]);
+    graph->addSequence(g[0]);
+    graph->addSequence(g[1]);
+    graph->addSequence(g[2]);
+    graph->addSequence(g[3]);
+    graph->addSequence(g[4]);
     vector<int> forward;
     forward.push_back(0);
     forward.push_back(1);
