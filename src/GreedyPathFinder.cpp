@@ -42,35 +42,56 @@ PathPointer GreedyPathFinder::findPath(IGraphConstPointer graph,
         }
         HashSet<int> fromVisited;
         HashSet<int> toVisited;
+        list<HashSet<int> > legs;
+        for (int i = 0; i < graph->sequenceCount(); i++)
+        {
+            HashSet<int> leg;
+            leg.insert(i);
+            legs.push_back(leg);
+        }
+
         HashMap<int,int> solution;
+        int from;
+        int to;
+        int overlap;
 
         while (edgeQueue.size() > 0)
         {
             pair<int,pair<int,int> > queueTop = edgeQueue.top();
 
-            int overlap = queueTop.first;
-            int from = queueTop.second.first;
-            int to = queueTop.second.second;
+            overlap = queueTop.first;
+            from = queueTop.second.first;
+            to = queueTop.second.second;
+            list<HashSet<int> >::iterator fromLeg = getLeg(from,legs);
+            list<HashSet<int> >::iterator toLeg = getLeg(to,legs);
+            if (fromLeg == legs.end())
+            {
+                throw std::logic_error("'from' not in legs.");
+            }
+            if (toLeg == legs.end())
+            {
+                throw std::logic_error("'to' not in legs.");
+            }
                 // If I haven't come from there yet...
             if (fromVisited.find(from) == fromVisited.end() &&
                     // and I've not already visited there...
                     toVisited.find(to) == toVisited.end() &&
-                    // and either I'm going nowhere I've been, or
-                    // I'm coming from somewhere I've not seen yet...
-                    (fromVisited.find(to) == fromVisited.end() ||
-                     toVisited.find(from) == toVisited.end()))
+                    // and we're not going in circles...
+                    fromLeg != toLeg)
             {
                 // then I must be an edge on a hamiltonian path
                 fromVisited.insert(from);
                 toVisited.insert(to);
                 solution.insert(make_pair(from,to));
+                fromLeg->insert(toLeg->begin(),toLeg->end());
+                legs.erase(toLeg);
             }
             edgeQueue.pop();
         }
 
         // Find the last edge (connect the path)
-        int from = -1;
-        int to = -1;
+        from = -1;
+        to = -1;
 
         for (int i = 0; i < graph->sequenceCount(); i++)
         {
@@ -118,3 +139,16 @@ VectorPointer<int> GreedyPathFinder::getPathFromMap(const HashMap<int,int> & map
     return vecPtr;
 }
 
+list<HashSet<int> >::iterator GreedyPathFinder::getLeg(int point,
+        list<HashSet<int> > & legs)
+{
+    for (list<HashSet<int> >::iterator iter = legs.begin();
+            iter != legs.end(); iter++)
+    {
+        if (iter->find(point) != iter->end())
+        {
+            return iter;
+        }
+    }
+    return legs.end();
+}

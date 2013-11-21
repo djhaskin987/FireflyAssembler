@@ -1,5 +1,6 @@
 #include "Graph.hpp"
 #include <stdexcept>
+#include <sstream>
 using namespace FireflyAssembler;
 using namespace std;
 
@@ -120,10 +121,20 @@ const std::unordered_map<int,int> & Graph::getOverlapsFor(int first) const
 
 void Graph::addOverlap(int aIndex, int bIndex)
 {
-    int overlap = sequences[aIndex].determineOverlap(sequences[bIndex]);
-    if (overlap > 0)
+    if (aIndex == bIndex)
     {
-        overlaps[aIndex][bIndex] = overlap;
+        stringstream ss;
+        ss << "Overlaps should never be looked for from one index ('"
+            << aIndex << "') to itself ('" << bIndex << "')." << endl;
+        throw std::logic_error(ss.str());
+    }
+    else
+    {
+        int overlap = sequences[aIndex].determineOverlap(sequences[bIndex]);
+        if (overlap > 0)
+        {
+            overlaps[aIndex][bIndex] = overlap;
+        }
     }
 }
 
