@@ -215,9 +215,6 @@ void getArgs(distance_type & distanceMeasure,
 SequenceVectorPointer
     eliminateContains(const SequenceVector & sequences)
 {
-    cout << "  Number of sequences prior to elimination: " << sequences.size()
-         << endl;
-
     SequenceVectorPointer returned(new SequenceVector());
     for (int i = 0; i < sequences.size(); i++)
     {
@@ -226,7 +223,7 @@ SequenceVectorPointer
         {
             if (i == j)
                 continue;
-            if (sequences[i].containsSize(sequences[j]) > 0)
+            if (sequences[j].containsSize(sequences[i]) > 0)
             {
                 isIContainedAnywhere = true;
                 break;
@@ -237,8 +234,6 @@ SequenceVectorPointer
             returned->push_back(sequences[i]);
         }
     }
-    cout << "  Number of sequences after contains elimination: "
-         << returned->size() << endl;
     return returned;
 }
 
@@ -335,7 +330,11 @@ int main(int argc, char * argv[])
         sequences = contigs;
         // preprocess sequences here
         cout << "  Eliminating 'contain' duplicates, if any..." << endl;
+        cout << "    Number of sequences prior to elimination: "
+             << sequences->size() << endl;
         sequences = eliminateContains(*sequences);
+        cout << "    Number of sequences after contains elimination: "
+             << sequences->size() << endl;
         cout << "    Done eliminating contain duplicates." << endl;
         cout << "  Merging Overlaps..." << endl;
         IGraphPointer graph(new Graph());

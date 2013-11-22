@@ -72,10 +72,10 @@ void Sequence::append(const Sequence & other)
 void Sequence::merge(const Sequence & other,
         int overlap)
 {
-    if (overlap > other.sequence.size())
-    {
-        throw runtime_error("overlap exceeds other sequence argument's length");
-    }
+    //if (overlap > other.sequence.size())
+    //{
+    //    throw runtime_error("overlap exceeds other sequence argument's length");
+    //}
     if (overlap > sequence.size())
     {
         throw runtime_error("overlap exceeds this sequence's length");
