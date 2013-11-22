@@ -98,7 +98,7 @@ VectorPointer<Sequence> Path::getContigs() const
     ss->push_back(pathGraph->getSequence(path[0]));
     for (int index = 1; index < path.size(); index++)
     {
-        const Sequence & nextSequence = pathGraph->getSequence(index);
+        const Sequence & nextSequence = pathGraph->getSequence(path[index]);
         if (pathGraph->hasOverlap(path[index-1],path[index]))
         {
             (*ss)[currentIndex].merge(nextSequence,
