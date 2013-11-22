@@ -3,6 +3,7 @@ sources = ['Sequence.cpp', \
     'Graph.cpp', \
     'Path.cpp', \
     'MeanOverlap.cpp', \
+    'N50Rating.cpp', \
     'GreedyPathFinder.cpp', \
     'LocalSearchPathFinder.cpp', \
     'FireflyPathFinder.cpp', \

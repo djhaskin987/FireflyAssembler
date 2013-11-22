@@ -87,7 +87,7 @@ void FireflyPathFinder::printFireflies()
 {
 	for(vector<PathPointer>::iterator firefly = fireflies.begin(); firefly != fireflies.end(); ++firefly)
     {
-		cout << **firefly << "(rating: " << ff->rate(**firefly) << ") contigs: (" << (*firefly)->getContigs()->size() << ")" << endl;
+		cout << **firefly << "(rating: " << ff->rate(**firefly) << ") (contigs: " << (*firefly)->getContigs()->size() << ")" << endl;
     }
     cout << *fireflies[7] << endl;
 }
