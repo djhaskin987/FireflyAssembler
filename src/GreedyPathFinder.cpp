@@ -2,6 +2,7 @@
 #include <queue>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 #include "Types.hpp"
 
 using namespace FireflyAssembler;

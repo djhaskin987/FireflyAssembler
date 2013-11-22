@@ -47,6 +47,7 @@ namespace FireflyAssembler
     std::ostream & operator << (std::ostream & s, const Path & p);
 
     typedef std::shared_ptr<Path> PathPointer;
+    typedef std::shared_ptr<const Path> PathConstPointer;
 }
 
 #endif

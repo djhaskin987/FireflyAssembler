@@ -27,3 +27,5 @@ nbproject/
 .externalToolBuilders/
 .project
 
+# Output
+output.txt

@@ -27,9 +27,6 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
     		numbers.push_back(i);
 
     	random_shuffle(numbers.begin(), numbers.end());
-    	for(vector<int>::iterator it = numbers.begin(); it != numbers.end(); ++it)
-    		cout << *it << ' ';
-    	cout << endl;
 
     	fireflies.push_back(PathPointer(new Path(graph, numbers)));
     }
@@ -65,14 +62,25 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
     }
     printFireflies();
 
+    vector<PathPointer>::iterator fittest = fireflies.begin();
+    double fittest_rating = ff->rate(**fittest);
+    for(vector<PathPointer>::iterator it = fireflies.begin() ; it != fireflies.end() ; ++it)
+        if (ff->rate(**it) > fittest_rating)
+        {
+            fittest_rating = ff->rate(**it);
+            fittest = it;
+        }
 
-	return NULL;
+    cout << "Fittest: " << ff->rate(**fittest) << endl;
+	return *fittest;
 }
 
 void FireflyPathFinder::printFireflies()
 {
-	for(vector<PathPointer>::iterator f1 = fireflies.begin(); f1 != fireflies.end(); ++f1)
-		cout << ff->rate(**f1) << endl;
-
+	for(vector<PathPointer>::iterator firefly = fireflies.begin(); firefly != fireflies.end(); ++firefly)
+    {
+		cout << **firefly << "(" << ff->rate(**firefly) << ")" << endl;
+    }
+    cout << *fireflies[7] << endl;
 }
 
