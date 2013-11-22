@@ -25,7 +25,7 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
 
     	random_shuffle(numbers.begin(), numbers.end());
 
-        PathPointer path = PathPointer(new Path(graph, numbers));
+        PathPointer path(new Path(graph, numbers));
         path->setRating(ff->rate(*path));
     	fireflies.push_back(path);
     }
@@ -52,8 +52,8 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
                     int j=1;
                     while( j < graph->sequenceCount() && moves_completed < movement )
                     {
-                        if((**f1)[j] != (**f2)[j] 
-                            && (*f2)->getGraph()->hasOverlap(j-1, j)  
+                        if((**f1)[j] != (**f2)[j]
+                            && (*f2)->getGraph()->hasOverlap(j-1, j)
                             && (!(*f1)->getGraph()->hasOverlap(j-1, j) || (*f2)->getGraph()->getOverlap(j-1, j) > (*f1)->getGraph()->hasOverlap(j-1, j)))
                         {
                             (*f1)->swapSequences(j, (**f2)[j]);

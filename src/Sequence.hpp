@@ -13,6 +13,9 @@ namespace FireflyAssembler
         private:
             void free();
             void copy(const Sequence & other);
+            int getScore(const std::vector<char> & a,
+                    const std::vector<char> & b) const;
+            double getMinEntryScore(int entry, int size, double minScore) const;
             double scoreShortcut(const std::vector<char> & a,
                     const std::vector<char> & b) const;
             std::vector<char> sequence;

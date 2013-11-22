@@ -78,7 +78,7 @@ SequenceVectorPointer deserializeSequences(string fileName)
 
 typedef enum
 {
-    CAYLEY, HAMMING
+    HAMMING
 } distance_type;
 
 typedef enum
@@ -98,8 +98,9 @@ void usage(int exitCode)
 {
     cout << "Usage: FireflyAssembler [<options>...] <input-fasta-file> <output-file>" << endl
         << "  Where:" << endl
-        << "    -d, --distance-metric {cayley|hamming}" << endl
-        << "        Specify distance metric (default is hamming)" << endl
+        << "    -d, --distance-metric {hamming}" << endl
+        << "        Specify distance metric. Currently only 'hamming' is supported." << endl
+        << "        ('hamming' is the default value)" << endl
         << "    -f, --fitness-function {meanoverlap|n50}" << endl
         << "        Specify fitness funciton (default is 'meanoverlap')" << endl
         << "    -p, --path-finder {greedy|firefly|localsearch}" << endl
@@ -135,11 +136,7 @@ void getArgs(distance_type & distanceMeasure,
         }
         else if (key == "-d" || key == "--distance-metric")
         {
-            if (val == "cayley")
-            {
-                distanceMeasure = CAYLEY;
-            }
-            else if (val == "hamming")
+            if (val == "hamming")
             {
                 distanceMeasure = HAMMING;
             }
@@ -270,26 +267,18 @@ int main(int argc, char * argv[])
             argv);
 
     DistanceMetricPointer dm;
-    dm.reset(new HammingDistance());
-/*
-    DistanceMetricPointer dm;
     switch (distanceMeasure)
     {
         case HAMMING:
-            dm = new HammingDistanceMetric();
-            break;
-        case CAYLEY:
-            dm = new CayleyDistanceMetric();
+            dm.reset(new HammingDistance());
             break;
         default:
             throw logic_error("internal state is faulty. Cannot continue.");
             break;
     };
-    */
     FitnessFunctionPointer fitnessFunction;
     switch (ffType)
     {
-        // TODO: Fully implement this
         case N50:
             fitnessFunction.reset(new N50Rating());
             break;
@@ -323,6 +312,10 @@ int main(int argc, char * argv[])
     // ones which are contained.
     // Then we merge based on overlaps.
     // We continue until the merge process stops giving good results.
+    //
+    // This do loop also is nice because some of the algorithms (local search,
+    // firefly) use random initialization and so could do better if we tried
+    // them over and over.
     SequenceVectorPointer
         contigs(deserializeSequences(inputFile));
 

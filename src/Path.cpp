@@ -56,6 +56,7 @@ Path::Path(IGraphConstPointer g,
 Path::Path(const Path & other) : pathGraph(other.pathGraph),
         path(other.path)
 {
+    validatePath();
 }
 
 Path & Path::operator = (const Path & other)
@@ -64,6 +65,7 @@ Path & Path::operator = (const Path & other)
     {
         free();
         copy(other);
+        validatePath();
     }
 }
 
@@ -135,9 +137,7 @@ void Path::swapSequences(int index, int new_sequence)
     for( int i=0 ; i<path.size() ; i++)
         if (path[i] == new_sequence)
             new_index = i;
-
-    path[new_index] = path[index];
-    path[index] = new_sequence;
+    swap(path[new_index], path[index]);
 }
 
 ostream & FireflyAssembler::operator << (ostream & s, const Path & p)
