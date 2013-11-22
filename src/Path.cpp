@@ -102,7 +102,7 @@ VectorPointer<Sequence> Path::getContigs() const
         if (pathGraph->hasOverlap(path[index-1],path[index]))
         {
             (*ss)[currentIndex].merge(nextSequence,
-                    pathGraph->getOverlap(path[index]-1,path[index]));
+                    pathGraph->getOverlap(path[index-1],path[index]));
         }
         else
         {

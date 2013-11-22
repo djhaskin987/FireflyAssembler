@@ -215,9 +215,6 @@ void getArgs(distance_type & distanceMeasure,
 SequenceVectorPointer
     eliminateContains(const SequenceVector & sequences)
 {
-    cout << "  Number of sequences prior to elimination: " << sequences.size()
-         << endl;
-
     SequenceVectorPointer returned(new SequenceVector());
     for (int i = 0; i < sequences.size(); i++)
     {
@@ -226,7 +223,7 @@ SequenceVectorPointer
         {
             if (i == j)
                 continue;
-            if (sequences[i].containsSize(sequences[j]) > 0)
+            if (sequences[j].containsSize(sequences[i]) > 0)
             {
                 isIContainedAnywhere = true;
                 break;
@@ -237,8 +234,6 @@ SequenceVectorPointer
             returned->push_back(sequences[i]);
         }
     }
-    cout << "  Number of sequences after contains elimination: "
-         << returned->size() << endl;
     return returned;
 }
 
@@ -329,26 +324,31 @@ int main(int argc, char * argv[])
         contigs(deserializeSequences(inputFile));
 
     SequenceVectorPointer sequences;
+    cout << "Starting consolidation run." << endl;
     do {
         if (contigs->size() == 1)
         {
-            cout << "Only one sequence left." << endl;
+            cout << "  Only one sequence left." << endl;
             break;
         }
         sequences = contigs;
         // preprocess sequences here
-        cout << "Eliminating 'contain' duplicates, if any..." << endl;
+        cout << "  Eliminating 'contain' duplicates, if any..." << endl;
+        cout << "    Number of sequences prior to elimination: "
+             << sequences->size() << endl;
         sequences = eliminateContains(*sequences);
-        cout << "  Done eliminating contain duplicates." << endl;
-        cout << "Merging Overlaps..." << endl;
+        cout << "    Number of sequences after contains elimination: "
+             << sequences->size() << endl;
+        cout << "    Done eliminating contain duplicates." << endl;
+        cout << "  Merging Overlaps..." << endl;
         IGraphPointer graph(new Graph());
-        cout << "  Loading Graph..." << endl;
+        cout << "    Loading Graph..." << endl;
         // load graph
         for (int i = 0; i < sequences->size(); i++)
         {
-            cout << "    Loading Sequence #" << (i + 1) << " into graph..." << endl;
+            cout << "      Loading Sequence #" << (i + 1) << " into graph..." << endl;
             graph->addSequence((*sequences)[i]);
-            cout << "      Done." << endl;
+            cout << "        Done." << endl;
         }
         cout << "    Done loading Graph." << endl;
         cout << "Getting contigs..." << endl;
@@ -356,7 +356,7 @@ int main(int argc, char * argv[])
         cout << "  Done getting contigs.  Found " << contigs->size()
                 << " contigs." << endl;
     } while (sequences->size() > contigs->size());
-
+    cout << "Done consolidating." << endl;
     output(outputFile,contigs);
 
     return 0;
