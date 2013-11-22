@@ -1,4 +1,5 @@
 #include "Sequence.hpp"
+#include "Algorithms.hpp"
 #include <stdexcept>
 #include <limits>
 #include <iostream>
@@ -91,100 +92,6 @@ void Sequence::merge(const Sequence & other,
             other.sequence.end());
 }
 
-double Sequence::getMinEntryScore(int entry, int size, double minScore) const
-{
-    double minNormalizedScore = (double)entry /
-                                (double)size;
-    if (minScore > minNormalizedScore)
-    {
-        minScore = minNormalizedScore;
-    }
-    return minScore;
-}
-
-int Sequence::getScore(const vector<char> & a,
-        const vector<char> & b) const
-{
-    vector<vector<int> > matrix;
-    matrix.push_back(vector<int>());
-    int largerSize = a.size() > b.size() ? a.size() : b.size();
-    double minScore = numeric_limits<double>::infinity();    
-    matrix[0].push_back(Sequence::MATCH_SCORE);
-    minScore = getMinEntryScore(matrix[0][0], largerSize, minScore);
-    for (int i = 1; i <= a.size(); i++)
-    {
-        matrix[0].push_back(matrix[0][i-1]+Sequence::DELETE_SCORE);
-        minScore = getMinEntryScore(matrix[0][i], largerSize, minScore);
-    }
-    if (minScore > Sequence::TOLERANCE_SCORE)
-    {
-        // We're already too big!
-        // And since no score incrementer is negative
-        // (INSERT_SCORE, DELETE_SCORE, and MATCHSUB_SCORE are non-negative),
-        // We know that anything produced in the next row is also going to be
-        // too big, since it can only get bigger from here (this row).
-        // We may as well return now.
-        return numeric_limits<int>::max();
-    }
-
-    int row;
-    for (row = 1; row <= b.size(); row++)
-    {
-        matrix.push_back(vector<int>());
-        minScore = numeric_limits<double>::infinity();
-        matrix[row].push_back(matrix[row-1][0]+Sequence::INSERT_SCORE);
-        minScore = getMinEntryScore(matrix[row][0], largerSize, minScore);
-        for (int col = 1; col <= a.size(); col++)
-        {
-            int insertScore = matrix[row-1][col] + Sequence::INSERT_SCORE;
-            int deleteScore = matrix[row][col-1] + Sequence::DELETE_SCORE;
-            int matchSubScore = matrix[row-1][col-1];
-            if (a[col-1] == b[row-1])
-            {
-                matchSubScore += Sequence::MATCH_SCORE;
-                if (matchSubScore <= insertScore &&
-                        matchSubScore <= deleteScore)
-                {
-                    matrix[row].push_back(matchSubScore);
-                    minScore = getMinEntryScore(matrix[row][col], largerSize, minScore);
-                    continue;
-                }
-            }
-            else
-            {
-                matchSubScore += Sequence::SUBST_SCORE;
-                if (matchSubScore <= insertScore &&
-                        matchSubScore <= deleteScore)
-                {
-                    matrix[row].push_back(matchSubScore);
-                    minScore = getMinEntryScore(matrix[row][col], largerSize, minScore);
-                    continue;
-                }
-            }
-            if (insertScore <= deleteScore)
-            {
-                matrix[row].push_back(insertScore);
-            }
-            else
-            {
-                matrix[row].push_back(deleteScore);
-            }
-            minScore = getMinEntryScore(matrix[row][col], largerSize, minScore);
-        }
-        if (minScore > Sequence::TOLERANCE_SCORE)
-        {
-            // We're already too big!
-            // And since no score incrementer is negative
-            // (INSERT_SCORE, DELETE_SCORE, and MATCHSUB_SCORE are non-negative),
-            // We know that anything produced in the next row is also going to be
-            // too big, since it can only get bigger from here (this row).
-            // We may as well return now.
-            return numeric_limits<int>::max();
-        }
-    }
-    return matrix[b.size()][a.size()];
-}
-
 int Sequence::containsSize(const Sequence & other) const
 {
     int minAOffset = 0;
@@ -250,7 +157,6 @@ int Sequence::containsSize(const Sequence & other) const
 double Sequence::scoreShortcut(const vector<char> & a,
         const vector<char> & b) const
 {
-
     int indels;
     if (a.size() > b.size())
     {
@@ -266,7 +172,11 @@ double Sequence::scoreShortcut(const vector<char> & a,
     {
         return numeric_limits<double>::infinity();
     }
-    int segmentRawScore = getScore(a, b);
+    int segmentRawScore = getScore(a, b, Sequence::INSERT_SCORE,
+            Sequence::DELETE_SCORE,
+            Sequence::MATCH_SCORE,
+            Sequence::SUBST_SCORE,
+            Sequence::TOLERANCE_SCORE);
     // decision made: score with smallest error, or
     // score with under-tolerance error that's the longest?
 
