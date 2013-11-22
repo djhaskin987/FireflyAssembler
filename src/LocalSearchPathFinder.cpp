@@ -27,8 +27,6 @@ PathPointer LocalSearchPathFinder::findPath(IGraphConstPointer graph,
         {
             triedPath.push_back((*initial)[i]);
         }
-        cout << "Graph size: " << graph->sequenceCount() << endl;
-        cout << "path size: " << triedPath.size() << endl;
 
         double currentScore = ff->rate(Path(graph, triedPath));
         double bestScore = -numeric_limits<double>::infinity();

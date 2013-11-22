@@ -10,8 +10,6 @@ using namespace std;
 PathPointer GreedyPathFinder::findPath(IGraphConstPointer graph,
         FitnessFunctionPointer ff)
 {
-    cout << "Graph size: " << graph->sequenceCount() << endl;
-    cout << flush;
     if (graph->sequenceCount() == 1)
     {
         vector<int> path(1);
@@ -90,39 +88,29 @@ PathPointer GreedyPathFinder::findPath(IGraphConstPointer graph,
         }
 
         // Find the last edge (connect the path)
-        from = -1;
-        to = -1;
+        int start = -1;
+        int end = -1;
 
         for (int i = 0; i < graph->sequenceCount(); i++)
         {
             if (fromVisited.find(i) == fromVisited.end())
             {
-                from = i;
+                end = i;
             }
             else if (toVisited.find(i) == toVisited.end())
             {
-                to = i;
+                start = i;
             }
         }
-        solution.insert(make_pair(from, to));
+        // Complete the TSP tour for our solver.
+        solution.insert(make_pair(end, start));
         // solution is now fully populated with a greedy solution. Now to find
         // where to start.
+        VectorPointer<int> pathIndices = getPathFromMap(solution, start);
 
-        PathPointer bestPath;
-        double maxScore = -numeric_limits<double>::infinity();
-        for (int i = 0; i < graph->sequenceCount(); i++)
-        {
-            VectorPointer<int> pathIndices = getPathFromMap(solution, i);
+        PathPointer returnedPath(new Path(graph, *pathIndices));
 
-            PathPointer currentPath(new Path(graph, *pathIndices));
-            double currentScore = ff->rate(*currentPath);
-            if (currentScore > maxScore)
-            {
-                maxScore = currentScore;
-                bestPath = currentPath;
-            }
-        }
-        return bestPath;
+        return returnedPath;
     }
 }
 

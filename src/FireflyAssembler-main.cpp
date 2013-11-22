@@ -325,34 +325,37 @@ int main(int argc, char * argv[])
         contigs(deserializeSequences(inputFile));
 
     SequenceVectorPointer sequences;
+    cout << "Starting consolidation run." << endl;
     do {
         if (contigs->size() == 1)
         {
-            cout << "Only one sequence left." << endl;
+            cout << "  Only one sequence left." << endl;
             break;
         }
         sequences = contigs;
         // preprocess sequences here
-        cout << "Eliminating 'contain' duplicates, if any..." << endl;
+        cout << "  Eliminating 'contain' duplicates, if any..." << endl;
         sequences = eliminateContains(*sequences);
-        cout << "  Done eliminating contain duplicates." << endl;
-        cout << "Merging Overlaps..." << endl;
+        cout << "    Done eliminating contain duplicates." << endl;
+        cout << "  Merging Overlaps..." << endl;
         IGraphPointer graph(new Graph());
-        cout << "  Loading Graph..." << endl;
+        cout << "    Loading Graph..." << endl;
         // load graph
         for (int i = 0; i < sequences->size(); i++)
         {
-            cout << "    Loading Sequence #" << (i + 1) << " into graph..." << endl;
+            cout << "      Loading Sequence #" << (i + 1) << " into graph..." << endl;
             graph->addSequence((*sequences)[i]);
-            cout << "      Done." << endl;
+            cout << "        Done." << endl;
         }
-        cout << "    Done loading Graph." << endl;
-        cout << "Getting contigs..." << endl;
+        cout << "      Graph size: " << graph->sequenceCount() << endl;
+        cout << "      Done loading Graph." << endl;
+        cout << "  Getting contigs..." << endl;
+
         contigs = pathFinder->findPath(graph, fitnessFunction)->getContigs();
         cout << "  Done getting contigs.  Found " << contigs->size()
                 << " contigs." << endl;
     } while (sequences->size() > contigs->size());
-
+    cout << "Done consolidating." << endl;
     output(outputFile,contigs);
 
     return 0;
