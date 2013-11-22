@@ -11,6 +11,7 @@
 #include "LocalSearchPathFinder.hpp"
 #include "FireflyPathFinder.hpp"
 #include "MeanOverlap.hpp"
+#include "N50Rating.hpp"
 #include "DistanceMetric.hpp"
 #include "HammingDistance.hpp"
 
@@ -83,7 +84,7 @@ typedef enum
 typedef enum
 {
     MEAN_OVERLAP,
-    CONTIG_LENGTH
+    N50
 } fitness_function_type;
 
 typedef enum
@@ -99,7 +100,7 @@ void usage(int exitCode)
         << "  Where:" << endl
         << "    -d, --distance-metric {cayley|hamming}" << endl
         << "        Specify distance metric (default is hamming)" << endl
-        << "    -f, --fitness-function {meanoverlap|contiglength}" << endl
+        << "    -f, --fitness-function {meanoverlap|n50}" << endl
         << "        Specify fitness funciton (default is 'meanoverlap')" << endl
         << "    -p, --path-finder {greedy|firefly|localsearch}" << endl
         << "        Specify path finder (default is greedy)" << endl;
@@ -156,9 +157,9 @@ void getArgs(distance_type & distanceMeasure,
             {
                 ffType = MEAN_OVERLAP;
             }
-            else if (val == "contiglength")
+            else if (val == "n50")
             {
-                ffType = CONTIG_LENGTH;
+                ffType = N50;
             }
             else
             {
@@ -289,7 +290,9 @@ int main(int argc, char * argv[])
     switch (ffType)
     {
         // TODO: Fully implement this
-        case CONTIG_LENGTH:
+        case N50:
+            fitnessFunction.reset(new N50Rating());
+            break;
         case MEAN_OVERLAP:
             fitnessFunction.reset(new MeanOverlap());
             break;
