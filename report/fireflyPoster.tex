@@ -1,0 +1,55 @@
+\documentclass[final,hyperref={pdfpagelabels=false}]{beamer}
+\usepackage{grffile}
+\mode<presentation>{\usetheme{byu}}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amsthm, amssymb, latexsym}
+\boldmath
+\usepackage[orientation=landscape,size=a0]{beamerposter}
+\usepackage{array,booktabs,tabularx}
+\newcolumntype{Z}{>{\centering\arraybackslash}X}
+\listfiles
+\graphicspath{{figures/}}
+\title{\huge Firefly Assembler: Parallelizing the Assembly of Genome Fragments}
+\author{Kyle Corbitt, Dan Haskin, Perry Ridge}
+\institute[Brigham Young University]{Molecular Biology and Computer Science Departments}
+\date[Nov. 20th, 2013]{Nov. 20th, 2013}
+\newlength{\columnheight}
+\setlength{\columnheight}{105cm}
+\begin{document}
+\begin{frame}
+  \begin{columns}
+    \begin{column}{.49\textwidth}
+      \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+        \begin{minipage}[T]{.95\textwidth}
+          \parbox[t][\columnheight]{\textwidth}{
+            \begin{block}{Introduction}
+                Something way cool here.
+            \end{block}
+            \begin{block}{Feature Extraction}
+                I am a doof.
+            \end{block}
+          }
+        \end{minipage}
+      \end{beamercolorbox}
+    \end{column}
+    \begin{column}{.49\textwidth}
+      \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+        \begin{minipage}[T]{.95\textwidth}
+          \parbox[t][\columnheight]{\textwidth}{
+            \begin{block}{Introduction}
+                Something way cool here.
+            \end{block}
+            \vfill
+            \begin{block}{Feature Extraction}
+                I am a doof.
+            \end{block}
+          }
+        \end{minipage}
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+  \vskip1ex
+  \tiny\hfill{Created with \LaTeX \texttt{beamerposter}  \url{http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php} \hskip1em}
+\end{frame}
+\end{document}
