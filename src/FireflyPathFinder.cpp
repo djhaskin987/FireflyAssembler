@@ -45,10 +45,12 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
                     double intensity = ff->rate(**f2)-ff->rate(**f1);
                     int movement = (int)floor(intensity/distance*MOVEMENT_RATE);
                     int moves_completed = 0;
-                    int j=0;
-                    while( j<graph->sequenceCount() && moves_completed<movement )
+                    int j=1;
+                    while( j < graph->sequenceCount() && moves_completed < movement )
                     {
-                        if((**f1)[j] != (**f2)[j])
+                        if((**f1)[j] != (**f2)[j] 
+                            && (*f2)->getGraph()->hasOverlap(j-1, j)  
+                            && (!(*f1)->getGraph()->hasOverlap(j-1, j) || (*f2)->getGraph()->getOverlap(j-1, j) > (*f1)->getGraph()->hasOverlap(j-1, j)))
                         {
                             (*f1)->swapSequences(j, (**f2)[j]);
                             moves_completed++;
@@ -71,7 +73,6 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
             fittest = it;
         }
 
-    cout << "Fittest: " << ff->rate(**fittest) << endl;
 	return *fittest;
 }
 
@@ -79,7 +80,7 @@ void FireflyPathFinder::printFireflies()
 {
 	for(vector<PathPointer>::iterator firefly = fireflies.begin(); firefly != fireflies.end(); ++firefly)
     {
-		cout << **firefly << "(" << ff->rate(**firefly) << ")" << endl;
+		cout << **firefly << "(rating: " << ff->rate(**firefly) << ") contigs: (" << (*firefly)->getContigs()->size() << ")" << endl;
     }
     cout << *fireflies[7] << endl;
 }
