@@ -43,6 +43,7 @@ namespace FireflyAssembler
             double getRating();
 
             void swapSequences(int index, int new_sequence);
+            bool operator ==(const Path & other);
     };
     std::ostream & operator << (std::ostream & s, const Path & p);
 

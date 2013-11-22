@@ -13,14 +13,11 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
         FitnessFunctionPointer ff, DistanceMetricPointer dm)
 {
 	this->ff = ff;
-	PathFinderPointer greedyFinder;
-	greedyFinder.reset(new GreedyPathFinder());
 
-//    cout << ff->rate(*greedy) << endl;
-
+    int populationSize = NUM_FIREFLIES * graph->sequenceCount();
     // generate random paths
 	srand(time(0));
-    for(int i=0 ; i<NUM_FIREFLIES ; i++)
+    for(int i=0 ; i<populationSize ; i++)
     {
     	vector<int> numbers;
     	for(int i=0 ; i<graph->sequenceCount() ; i++)
@@ -30,15 +27,20 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
 
     	fireflies.push_back(PathPointer(new Path(graph, numbers)));
     }
+    int majority = (populationSize / 2) + 1;
 
-    // fireflies.push_back(greedyFinder->findPath(graph, ff, dm));
-
-
-    for(int i=0 ; i<NUM_ITERATIONS ; i++) 
+    int equalFireflies = 0;
+    int neededEqualities = (((graph->sequenceCount() * graph->sequenceCount()) -
+        graph->sequenceCount()) * 2) / 3;
+    for(int i=0 ; equalFireflies < neededEqualities && i<NUM_ITERATIONS ; i++)
     {
-        for(vector<PathPointer>::iterator f1 = fireflies.begin(); f1 != fireflies.end(); ++f1) 
+        equalFireflies = 0;
+
+        for(vector<PathPointer>::iterator f1 = fireflies.begin();
+                f1 != fireflies.end(); ++f1)
         {
-            for(vector<PathPointer>::iterator f2 = fireflies.begin(); f2 != fireflies.end(); ++f2) 
+            for(vector<PathPointer>::iterator f2 = fireflies.begin();
+                    f2 != fireflies.end(); ++f2)
             {
                 if (f1 != f2) {
                     double distance = dm->distance(**f1, **f2)+.0001;
@@ -55,13 +57,15 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
                         }
                         j++;
                     }
+                    if (**f1 == **f2)
+                    {
+                        equalFireflies++;
+                    }
                 }
             }
         }
-
     }
     printFireflies();
-
     vector<PathPointer>::iterator fittest = fireflies.begin();
     double fittest_rating = ff->rate(**fittest);
     for(vector<PathPointer>::iterator it = fireflies.begin() ; it != fireflies.end() ; ++it)

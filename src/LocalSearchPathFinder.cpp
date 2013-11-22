@@ -3,6 +3,7 @@
 #include <queue>
 #include <iostream>
 #include <limits>
+#include <algorithm>
 #include "Types.hpp"
 
 using namespace FireflyAssembler;
@@ -20,15 +21,19 @@ PathPointer LocalSearchPathFinder::findPath(IGraphConstPointer graph,
     }
     else
     {
-        PathFinderPointer greedy(new GreedyPathFinder());
-        PathPointer initial = greedy->findPath(graph,ff,dm);
-        vector<int> triedPath;
-        for (int i = 0; i < graph->sequenceCount(); i++)
-        {
-            triedPath.push_back((*initial)[i]);
-        }
+        VectorPointer<int> initialNodes(new vector<int>());
 
-        double currentScore = ff->rate(Path(graph, triedPath));
+        srand(time(0));
+        for(int i=0 ; i<graph->sequenceCount() ; i++)
+            initialNodes->push_back(i);
+        random_shuffle(initialNodes->begin(), initialNodes->end());
+
+        PathPointer initial(new Path(graph,*initialNodes));
+        VectorPointer<int> currentNodes = initialNodes;
+        VectorPointer<int> triedNodes(new vector<int>(initialNodes->begin(),
+                    initialNodes->end()));
+
+        double currentScore = ff->rate(Path(graph, *currentNodes));
         double bestScore = -numeric_limits<double>::infinity();
         while (currentScore > bestScore)
         {
@@ -38,18 +43,18 @@ PathPointer LocalSearchPathFinder::findPath(IGraphConstPointer graph,
             {
                 for (int j = i + 1; j < graph->sequenceCount(); j++)
                 {
-                    int tmp = triedPath[i];
-                    triedPath[i] = triedPath[j];
-                    triedPath[j] = tmp;
-                    double score = ff->rate(Path(graph,triedPath));
+                    swap((*triedNodes)[i],(*triedNodes)[j]);
+                    double score = ff->rate(Path(graph,*triedNodes));
                     if (score > currentScore)
                     {
                         found = true;
                         currentScore = score;
+                        currentNodes = triedNodes;
+                        triedNodes.reset(new vector<int>(currentNodes->begin(),
+                            currentNodes->end()));
                         break;
                     }
-                    triedPath[j] = triedPath[i];
-                    triedPath[i] = tmp;
+                    swap((*triedNodes)[i],(*triedNodes)[j]);
                 }
                 if (found)
                 {
@@ -57,7 +62,7 @@ PathPointer LocalSearchPathFinder::findPath(IGraphConstPointer graph,
                 }
             }
         }
-        return PathPointer(new Path(graph, triedPath));
+        return PathPointer(new Path(graph, *currentNodes));
     }
 }
 

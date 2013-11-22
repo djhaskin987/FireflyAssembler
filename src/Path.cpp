@@ -86,6 +86,12 @@ int Path::operator [] (int index) const
 {
     return path[index];
 }
+bool Path::operator ==(const Path & other)
+{
+    // Same sequence, same graph
+    return path == other.path &&
+        pathGraph.get() == other.pathGraph.get();
+}
 
 VectorPointer<Sequence> Path::getContigs() const
 {
