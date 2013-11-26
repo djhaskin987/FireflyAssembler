@@ -1,5 +1,9 @@
 Import('mode')
-libraryPaths = [ '/usr/lib', '/usr/local/lib' ]
+import os
+
+libraryPaths = [ os.environ['HOME'] + '/usr/lib', \
+                 os.environ['HOME'] + '/usr/lib64', \
+                 '/usr/lib', '/usr/lib64' ]
 sources = ['Sequence.cpp', \
     'Graph.cpp', \
     'Path.cpp', \
