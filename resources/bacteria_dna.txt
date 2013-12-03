@@ -1,0 +1,1 @@
+The bacteria DNA samples were found at ftp://ftp.ncbi.nih.gov/genbank/genomes/Bacteria/
