@@ -5,9 +5,9 @@
 import sys, random
 from Bio import SeqIO, Seq
 
-DEFAULT_COVERAGE = 5
-AVERAGE_LENGTH = 100
-MAX_LENGTH = 10000
+DEFAULT_COVERAGE = 10
+AVERAGE_LENGTH = 15
+MAX_LENGTH = 50
 
 def produce_reads(in_file, out_file, coverage, max_length):
     input_sequence = SeqIO.read(in_file,"fasta").seq.tostring()[0:max_length]
@@ -18,7 +18,7 @@ def produce_reads(in_file, out_file, coverage, max_length):
     reads = []
 
     while length_so_far < total_length:
-        length = random.randint(AVERAGE_LENGTH*.75, AVERAGE_LENGTH*1.25)
+        length = random.randint(round(AVERAGE_LENGTH*.75), round(AVERAGE_LENGTH*1.25))
         length_so_far += length
         start = random.randrange(len(input_sequence))
         seq = ''
