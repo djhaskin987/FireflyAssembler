@@ -30,12 +30,5 @@ reads.each_with_index do |r1, i|
   end
 end
 
-# edges.each_with_index do |selected_edges, i|
-#   selected_edges.each_with_index do |edge, j|
-#     if edge > 3
-#     end
-#   end
-# end
-
 # Generate output image
 g.output( :png => "example_graph.png" )
