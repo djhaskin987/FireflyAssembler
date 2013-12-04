@@ -1,6 +1,7 @@
 .PHONY: build clean test
+mode=release
 build:
-	scons -Q --debug=stacktrace
+	scons -Q --debug=stacktrace mode=$(mode)
 clean:
 	scons --clean
 test:

@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <regex>
 #include <ctime>
+#include "StraightMatcher.hpp"
+#include "DPMatcher.hpp"
 #include "Sequence.hpp"
 #include "Types.hpp"
 #include "Graph.hpp"
@@ -23,7 +25,7 @@ typedef VectorPointer<FireflyAssembler::Sequence>
 typedef vector<FireflyAssembler::Sequence> SequenceVector;
 using Sequence = FireflyAssembler::Sequence;
 
-SequenceVectorPointer deserializeSequences(string fileName)
+SequenceVectorPointer deserializeSequences(string fileName, MatcherConstPointer m)
 {
     SequenceVectorPointer sequences(new SequenceVector());
 
@@ -43,7 +45,7 @@ SequenceVectorPointer deserializeSequences(string fileName)
         getline(in,line);
         if ( line[0] == '>' )
         {
-            sequences->push_back(FireflyAssembler::Sequence());
+            sequences->push_back(FireflyAssembler::Sequence(m));
         }
         else
         {
@@ -95,6 +97,12 @@ typedef enum
     LOCAL
 } path_finder_type;
 
+typedef enum
+{
+    STRAIGHT,
+    DP
+} matcher_type;
+
 void usage(int exitCode)
 {
     cout << "Usage: FireflyAssembler [<options>...] <input-fasta-file> <output-file>" << endl
@@ -105,13 +113,16 @@ void usage(int exitCode)
         << "    -f, --fitness-function {meanoverlap|n50}" << endl
         << "        Specify fitness funciton (default is 'meanoverlap')" << endl
         << "    -p, --path-finder {greedy|firefly|localsearch}" << endl
-        << "        Specify path finder (default is greedy)" << endl;
+        << "        Specify path finder (default is greedy)" << endl
+        << "    -m, --matcher {straight|dynamicprogramming}" << endl
+        << "        Specify overlap/container matcher (straight is default)" << endl;
     exit(exitCode);
 }
 
 void getArgs(distance_type & distanceMeasure,
         fitness_function_type & ffType,
         path_finder_type & pfType,
+        matcher_type & mType,
         string & inputFile,
         string & outputFile,
         int argc,
@@ -162,6 +173,24 @@ void getArgs(distance_type & distanceMeasure,
             else
             {
                 cerr << "Invalid fitness function type '"
+                     << argv[++currentArgIndex] << "'." << endl;
+                usage(1);
+            }
+            currentArgIndex += 2;
+        }
+        else if (key == "-m" || key == "--matcher")
+        {
+            if (val == "straight")
+            {
+                mType = STRAIGHT;
+            }
+            else if (val == "dynamicprogramming")
+            {
+                mType = DP;
+            }
+            else
+            {
+                cerr << "Invalid matcher type '"
                      << argv[++currentArgIndex] << "'." << endl;
                 usage(1);
             }
@@ -254,56 +283,70 @@ void output(const string & filename, SequenceVectorPointer contigs)
 
 int main(int argc, char * argv[])
 {
+    cout.precision(6);
     string inputFile = "";
     string outputFile = "";
     distance_type distanceMeasure = HAMMING;
     fitness_function_type ffType = MEAN_OVERLAP;
     path_finder_type pfType = GREEDY;
+    matcher_type mType = STRAIGHT;
     getArgs(distanceMeasure,
             ffType,
             pfType,
+            mType,
             inputFile,
             outputFile,
             argc,
             argv);
+    PathFinderPointer pathFinder;
+    switch (pfType)
+    {
+        case FIREFLY:
+            cout << "Using the firefly path finder." << endl;
+        	pathFinder.reset(new FireflyPathFinder());
+        	break;
+        case GREEDY:
+            cout << "Using the greedy path finder." << endl;
+            pathFinder.reset(new GreedyPathFinder());
+            break;
+        case LOCAL:
+            cout << "Using the local search path finder." << endl;
+            pathFinder.reset(new LocalSearchPathFinder());
+            break;
+        default:
+            throw logic_error("Internal state is faulty. Cannot continue.");
+            break;
+    };
 
     DistanceMetricPointer dm;
     switch (distanceMeasure)
     {
         case HAMMING:
+            cout << "Using Hamming distance (this only applies for the firefly" << endl
+                << "  pathfinder)." << endl;
             dm.reset(new HammingDistance());
             break;
         default:
-            throw logic_error("internal state is faulty. Cannot continue.");
+            throw logic_error("Internal state is faulty. Cannot continue.");
             break;
     };
     FitnessFunctionPointer fitnessFunction;
     switch (ffType)
     {
         case N50:
+            cout << "Using N50 longest length as the fitness function" << endl
+                 << "  (this only applies to the local search and firefly path" << endl
+                 << "  finders)." << endl;
             fitnessFunction.reset(new N50Rating());
             break;
         case MEAN_OVERLAP:
+            cout << "Using largest mean overlap as the fitness function" << endl
+                 << "  (this only applies to the local search and firefly path" << endl
+                 << "  finders)." << endl;
             fitnessFunction.reset(new MeanOverlap());
             break;
         default:
-            throw logic_error("internal state is faulty. Cannot continue.");
-            break;
-    };
-    PathFinderPointer pathFinder;
-    switch (pfType)
-    {
-        case FIREFLY:
-        	pathFinder.reset(new FireflyPathFinder());
-        	break;
-        case GREEDY:
-            pathFinder.reset(new GreedyPathFinder());
-            break;
-        case LOCAL:
-            pathFinder.reset(new LocalSearchPathFinder());
-            break;
-        default:
-            throw logic_error("internal state is faulty. Cannot continue.");
+            throw logic_error("Internal state is faulty. Cannot continue.");
             break;
     };
 
@@ -317,8 +360,31 @@ int main(int argc, char * argv[])
     // This do loop also is nice because some of the algorithms (local search,
     // firefly) use random initialization and so could do better if we tried
     // them over and over.
+    MatcherConstPointer theMatcher;
+    switch (mType)
+    {
+        case STRAIGHT:
+            cout << "Using the straight (hamming-distance-like)" << endl
+                 << "  matching algorithm." << endl;
+            theMatcher.reset((Matcher*)new StraightMatcher());
+            break;
+        case DP:
+            cout << "Using the dynamic programming (edit-distance-like)" << endl
+                << "  matching algorithm." << endl;
+            theMatcher.reset((Matcher*)new DPMatcher());
+            break;
+        default:
+            throw logic_error("Internal state is faulty. Cannot continue.");
+            break;
+    };
+    cout << "Loading sequences from file into memory..." << endl;
+    clock_t loadTime = clock();
     SequenceVectorPointer
-        contigs(deserializeSequences(inputFile));
+        contigs(deserializeSequences(inputFile,theMatcher));
+    loadTime = clock() - loadTime;
+    cout << "Loading took " << (((float)loadTime)/CLOCKS_PER_SEC) << " seconds, "
+         << loadTime << " clock ticks."
+         << endl;
 
     SequenceVectorPointer sequences;
     cout << "Starting consolidation run." << endl;
@@ -343,8 +409,9 @@ int main(int argc, char * argv[])
         sequences = eliminateContains(*sequences);
         currentContainsEliminationTime = clock() - currentContainsEliminationTime;
         cout << "    Elimination took " <<
-            (((double)currentContainsEliminationTime) / CLOCKS_PER_SEC) <<
-            " seconds." << endl;
+            (((double)currentContainsEliminationTime) / CLOCKS_PER_SEC)
+            << " seconds, " << currentContainsEliminationTime << " clock ticks."
+            << endl;
         containsEliminationTime += currentContainsEliminationTime;
         cout << "    Number of sequences after contains elimination: "
              << sequences->size() << endl;
@@ -363,7 +430,7 @@ int main(int argc, char * argv[])
         currentGraphLoadingTime = clock() - currentGraphLoadingTime;
         cout << "    Loading graph took " <<
             (((double)currentGraphLoadingTime)/CLOCKS_PER_SEC) <<
-            " seconds." << endl;
+            " seconds, " << currentGraphLoadingTime << " clock ticks." << endl;
         graphLoadingTime += currentGraphLoadingTime;
         cout << "    Done loading Graph." << endl;
         cout << "Getting contigs..." << endl;
@@ -372,18 +439,26 @@ int main(int argc, char * argv[])
         currentSolvingTime = clock() - currentSolvingTime;
         cout << "  Getting contigs took " <<
             (((double)currentSolvingTime) / CLOCKS_PER_SEC) <<
-            " seconds." << endl;
+            " seconds, " << currentSolvingTime << " clock ticks." << endl;
         solvingTime += currentSolvingTime;
         cout << "  Done getting contigs.  Found " << contigs->size()
                 << " contigs." << endl;
     } while (sequences->size() > contigs->size());
     consolidation_time = clock() - consolidation_time;
     cout << "Done consolidating. Consolidation took " <<
-       ( ((double)consolidation_time)/CLOCKS_PER_SEC) << " seconds." << endl;
-    cout << "Total contains elimination time: " << (((double)containsEliminationTime)/CLOCKS_PER_SEC) << endl;
-    cout << "Total graph loading time: " << (((double)graphLoadingTime)/CLOCKS_PER_SEC) << endl;
-    cout << "Total contig finding time: " << (((double)solvingTime)/CLOCKS_PER_SEC) << endl;
+       ( ((double)consolidation_time)/CLOCKS_PER_SEC) << " seconds, "
+       << consolidation_time << " clock ticks." << endl;
+    cout << "Total contains elimination time: "
+         << (((double)containsEliminationTime)/CLOCKS_PER_SEC) << " seconds, "
+         << containsEliminationTime << " clock ticks." << endl;
+    cout << "Total graph loading time: "
+         << (((double)graphLoadingTime)/CLOCKS_PER_SEC) << " seconds, "
+         << graphLoadingTime << " clock ticks."
+         << endl;
+    cout << "Total contig finding time: " << (((double)solvingTime)/CLOCKS_PER_SEC)
+         << " seconds, " << solvingTime << " clock ticks." << endl;
     cout << "Total iterations: " << iterations << endl;
+    cout << "Total contigs: " << contigs->size() << endl;
     output(outputFile,contigs);
 
     return 0;

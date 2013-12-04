@@ -4,7 +4,12 @@ import os
 libraryPaths = [ os.environ['HOME'] + '/usr/lib', \
                  os.environ['HOME'] + '/usr/lib64', \
                  '/usr/lib', '/usr/lib64' ]
-sources = ['Sequence.cpp', \
+
+sources = [
+    'Matcher.cpp', \
+    'StraightMatcher.cpp', \
+    'DPMatcher.cpp', \
+    'Sequence.cpp', \
     'Graph.cpp', \
     'Path.cpp', \
     'MeanOverlap.cpp', \
@@ -14,7 +19,7 @@ sources = ['Sequence.cpp', \
     'FireflyPathFinder.cpp', \
     'HammingDistance.cpp']
 env = Environment()
-
+env['CXX'] = os.environ['HOME'] + '/usr/bin/g++'
 ccFlags = ['-std=c++11','-Werror']
 if mode == 'debug':
     ccFlags.extend(['-O0','-g'])

@@ -1,6 +1,8 @@
 #ifndef __FireflyAssemblerSequence__
 #define __FireflyAssemblerSequence__
 #include "Types.hpp"
+#include "Matcher.hpp"
+#include <string>
 #include <vector>
 #include <string>
 #include <memory>
@@ -13,22 +15,12 @@ namespace FireflyAssembler
         private:
             void free();
             void copy(const Sequence & other);
-            int getScore(const std::vector<char> & a,
-                    const std::vector<char> & b) const;
-            double getMinEntryScore(int entry, int size, double minScore) const;
-            double scoreShortcut(const std::vector<char> & a,
-                    const std::vector<char> & b) const;
             std::vector<char> sequence;
+            MatcherConstPointer matcher;
         public:
-            static int MINIMUM_MATCH;
-            static double TOLERANCE_SCORE;
-            const static int INSERT_SCORE;
-            const static int DELETE_SCORE;
-            const static int SUBST_SCORE;
-            const static int MATCH_SCORE;
-            Sequence();
-            Sequence(const char * s);
-            Sequence(const std::string & s);
+            Sequence(MatcherConstPointer m);
+            Sequence(MatcherConstPointer m, const char * s);
+            Sequence(MatcherConstPointer m, const std::string & s);
             Sequence(const Sequence & other);
 
             Sequence & operator = (const Sequence & other);
@@ -42,6 +34,7 @@ namespace FireflyAssembler
             int length() const;
             void clear();
             void append(const Sequence & other);
+            void append(const std::string & s);
             StringPointer str() const;
             char operator [] (int index) const;
             bool operator == (const Sequence & other) const;
