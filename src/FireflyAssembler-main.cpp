@@ -2,6 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <regex>
+#include <ctime>
 #include "Sequence.hpp"
 #include "Types.hpp"
 #include "Graph.hpp"
@@ -321,18 +322,30 @@ int main(int argc, char * argv[])
 
     SequenceVectorPointer sequences;
     cout << "Starting consolidation run." << endl;
+    clock_t consolidation_time = clock();
+    clock_t graphLoadingTime = 0.0;
+    clock_t containsEliminationTime = 0.0;
+    clock_t solvingTime = 0.0;
+    int iterations = 0;
     do {
         if (contigs->size() == 1)
         {
             cout << "  Only one sequence left." << endl;
             break;
         }
+        iterations++;
         sequences = contigs;
         // preprocess sequences here
         cout << "  Eliminating 'contain' duplicates, if any..." << endl;
         cout << "    Number of sequences prior to elimination: "
              << sequences->size() << endl;
+        clock_t currentContainsEliminationTime = clock();
         sequences = eliminateContains(*sequences);
+        currentContainsEliminationTime = clock() - currentContainsEliminationTime;
+        cout << "    Elimination took " <<
+            (((double)currentContainsEliminationTime) / CLOCKS_PER_SEC) <<
+            " seconds." << endl;
+        containsEliminationTime += currentContainsEliminationTime;
         cout << "    Number of sequences after contains elimination: "
              << sequences->size() << endl;
         cout << "    Done eliminating contain duplicates." << endl;
@@ -340,19 +353,37 @@ int main(int argc, char * argv[])
         IGraphPointer graph(new Graph());
         cout << "    Loading Graph..." << endl;
         // load graph
+        clock_t currentGraphLoadingTime = clock();
         for (int i = 0; i < sequences->size(); i++)
         {
             cout << "      Loading Sequence #" << (i + 1) << " into graph..." << endl;
             graph->addSequence((*sequences)[i]);
             cout << "        Done." << endl;
         }
+        currentGraphLoadingTime = clock() - currentGraphLoadingTime;
+        cout << "    Loading graph took " <<
+            (((double)currentGraphLoadingTime)/CLOCKS_PER_SEC) <<
+            " seconds." << endl;
+        graphLoadingTime += currentGraphLoadingTime;
         cout << "    Done loading Graph." << endl;
         cout << "Getting contigs..." << endl;
+        clock_t currentSolvingTime = clock();
         contigs = pathFinder->findPath(graph, fitnessFunction, dm)->getContigs();
+        currentSolvingTime = clock() - currentSolvingTime;
+        cout << "  Getting contigs took " <<
+            (((double)currentSolvingTime) / CLOCKS_PER_SEC) <<
+            " seconds." << endl;
+        solvingTime += currentSolvingTime;
         cout << "  Done getting contigs.  Found " << contigs->size()
                 << " contigs." << endl;
     } while (sequences->size() > contigs->size());
-    cout << "Done consolidating." << endl;
+    consolidation_time = clock() - consolidation_time;
+    cout << "Done consolidating. Consolidation took " <<
+       ( ((double)consolidation_time)/CLOCKS_PER_SEC) << " seconds." << endl;
+    cout << "Total contains elimination time: " << (((double)containsEliminationTime)/CLOCKS_PER_SEC) << endl;
+    cout << "Total graph loading time: " << (((double)graphLoadingTime)/CLOCKS_PER_SEC) << endl;
+    cout << "Total contig finding time: " << (((double)solvingTime)/CLOCKS_PER_SEC) << endl;
+    cout << "Total iterations: " << iterations << endl;
     output(outputFile,contigs);
 
     return 0;
