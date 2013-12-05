@@ -1,0 +1,112 @@
+#!/bin/sh
+set -e
+set -x
+scancel -u dhaskin
+cd /fslhome/dhaskin/FireflyAssembler/resources
+
+for strategy in firefly greedy localsearch
+do
+    cat > l2_dataset3_${strategy}_batch.sh << BATCH
+#!/bin/bash
+
+#Submit this script with: sbatch thefilename
+
+#SBATCH --time=168:00:00   # walltime
+#SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --mem-per-cpu=4096M   # memory per CPU core
+#SBATCH -J "l2_dataset3_${strategy}"   # job name
+#SBATCH --mail-user=djhaskin987@gmail.com   # email address
+#SBATCH --mail-type=END
+#SBATCH --output=/fslhome/dhaskin/FireflyAssembler/resources/l2_dataset3/${strategy}.out
+#SBATCH --error=/fslhome/dhaskin/FireflyAssembler/resources/l2_dataset3/${strategy}.err
+
+set -x
+
+cd /fslhome/dhaskin/FireflyAssembler/resources/l2_dataset3
+export PATH="/fslgroup/fslg_genome/software/bin:\${HOME}/bin:\${HOME}/usr/bin:\${PATH}"
+export LD_LIBRARY_PATH="\${HOME}/usr/lib64:\${HOME}/usr/lib:\${LD_LIBRARY_PATH}"
+export LANG="en_US.UTF-8"
+export LOCALE="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export PYTHONPATH="/fslgroup/fslg_genome/software/lib64/python2.6/site-packages/"
+
+echo "Running on l2_dataset3..."
+echo "Using strategy ${strategy}..."
+echo "Getting time..."
+time /fslhome/dhaskin/FireflyAssembler/release-main/FireflyAssembler -p ${strategy} -m straight ./chr19.10000.fasta ./contigs_${strategy}_chr19.10000.fasta
+
+exit 0
+BATCH
+        cat > l2_dataset2_${strategy}_batch.sh << BATCH
+#!/bin/bash
+
+#Submit this script with: sbatch thefilename
+
+#SBATCH --time=168:00:00   # walltime
+#SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --mem-per-cpu=4096M   # memory per CPU core
+#SBATCH -J "l2_dataset2_${strategy}"   # job name
+#SBATCH --mail-user=djhaskin987@gmail.com   # email address
+#SBATCH --mail-type=END
+#SBATCH --output=/fslhome/dhaskin/FireflyAssembler/resources/l2_dataset2/${strategy}.out
+#SBATCH --error=/fslhome/dhaskin/FireflyAssembler/resources/l2_dataset2/${strategy}.err
+
+set -x
+
+cd /fslhome/dhaskin/FireflyAssembler/resources/l2_dataset2
+export PATH="/fslgroup/fslg_genome/software/bin:\${HOME}/bin:\${HOME}/usr/bin:\${PATH}"
+export LD_LIBRARY_PATH="\${HOME}/usr/lib64:\${HOME}/usr/lib:\${LD_LIBRARY_PATH}"
+export LANG="en_US.UTF-8"
+export LOCALE="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export PYTHONPATH="/fslgroup/fslg_genome/software/lib64/python2.6/site-packages/"
+
+echo "Running on l2_dataset2..."
+echo "Using strategy ${strategy}..."
+echo "Getting time..."
+time /fslhome/dhaskin/FireflyAssembler/release-main/FireflyAssembler -p ${strategy} -m straight ./chr19.1000.fasta ./contigs_${strategy}_chr19.1000.fasta
+
+exit 0
+BATCH
+    sbatch l2_dataset2_${strategy}_batch.sh
+    sbatch l2_dataset3_${strategy}_batch.sh
+    for input in 500 1000 1500 2000 2500 3000 3500 4000 4500 5000 5500 6000 6500 7000 7500 8000 8500 9000 9500 10000 20000 30000 40000 50000 60000 70000 80000 90000 100000
+    do
+        file=5x_coverage_${input}.reads.fasta
+        python ./sim-reads.py lactobacillus_acidophilus/CP002559.fna lactobacillus_acidophilus/${file} 5 ${input}
+        cat > ${strategy}_${input}_batch.sh << BATCH
+#!/bin/bash
+
+#Submit this script with: sbatch thefilename
+
+#SBATCH --time=168:00:00   # walltime
+#SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --mem-per-cpu=1024M   # memory per CPU core
+#SBATCH -J "lacto_${input}_${strategy}"   # job name
+#SBATCH --mail-user=djhaskin987@gmail.com   # email address
+#SBATCH --mail-type=END
+#SBATCH --output=/fslhome/dhaskin/FireflyAssembler/resources/lactobacillus_acidophilus/${strategy}_${input}.out
+#SBATCH --error=/fslhome/dhaskin/FireflyAssembler/resources/lactobacillus_acidophilus/${strategy}_${input}.err
+
+set -x
+
+cd /fslhome/dhaskin/FireflyAssembler/resources/lactobacillus_acidophilus
+export PATH="/fslgroup/fslg_genome/software/bin:\${HOME}/bin:\${HOME}/usr/bin:\${PATH}"
+export LD_LIBRARY_PATH="\${HOME}/usr/lib64:\${HOME}/usr/lib:\${LD_LIBRARY_PATH}"
+export LANG="en_US.UTF-8"
+export LOCALE="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export PYTHONPATH="/fslgroup/fslg_genome/software/lib64/python2.6/site-packages/"
+
+echo "Running on ${input}..."
+echo "Using strategy ${strategy}..."
+echo "Getting time..."
+time /fslhome/dhaskin/FireflyAssembler/release-main/FireflyAssembler -p ${strategy} -m straight ./${file} ./contigs_${strategy}_${input}.fasta
+exit 0
+BATCH
+        sbatch ${strategy}_${input}_batch.sh
+    done
+done
