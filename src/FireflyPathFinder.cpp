@@ -47,7 +47,7 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
                 if (f1 != f2) {
                     double distance = dm->distance(**f1, **f2)+.0001;
                     double intensity = (*f2)->getRating()-(*f1)->getRating();
-                    int movement = (int)floor(intensity*exp(-distance/MOVEMENT_RATE));
+                    int movement = (int)floor(intensity/distance*MOVEMENT_RATE);
                     int moves_completed = 0;
                     int j=1;
                     while( j < graph->sequenceCount() && moves_completed < movement )
