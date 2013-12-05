@@ -19,6 +19,9 @@
 
 # Building
 build-*/
+release-main/
+debug-main/
+debug-test/
 nbproject/
 *.orig
 
@@ -29,3 +32,10 @@ nbproject/
 
 # Output
 output.txt
+*.out
+*.err
+velvet/
+*.cap.*
+*.sh
+contigs*
+*.reads.*
