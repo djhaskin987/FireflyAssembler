@@ -34,6 +34,13 @@ double fitnessFunction(unsigned long number) {
     return result;
 }
 
+double factorDistance(unsigned long a, unsigned long b)
+{
+    double one =(double)a / (double)b;
+    double other = (double) b / (double) a;
+    return other > one ? other : one;
+}
+
 int hammingDistance(unsigned long a, unsigned long b)
 {
     unsigned long X = a ^ b;
@@ -70,8 +77,8 @@ double Firefly::rawFitness() {
 }
 
 double Firefly::intensity(Firefly* other) {
-	double distance = (double)hammingDistance(this->number, other->number);
-	return rawFitness() * exp(-distance);
+	double distance = (double)factorDistance(this->number, other->number);
+	return rawFitness() / distance;
 }
 
 void Firefly::move(Firefly* other) {

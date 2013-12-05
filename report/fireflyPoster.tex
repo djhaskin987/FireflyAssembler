@@ -5,7 +5,7 @@
 \usepackage[latin1]{inputenc}
 \usepackage{amsmath,amsthm, amssymb, latexsym}
 \boldmath
-\usepackage[orientation=landscape,size=a0]{beamerposter}
+\usepackage[orientation=landscape,size=a0,scale=1.5]{beamerposter}
 \usepackage{array,booktabs,tabularx}
 \newcolumntype{Z}{>{\centering\arraybackslash}X}
 \listfiles
@@ -23,8 +23,23 @@
       \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
         \begin{minipage}[T]{.95\textwidth}
           \parbox[t][\columnheight]{\textwidth}{
+            \begin{block}{Purpose}
+                Our purpose is to create a genome assembler based on a novel
+                approach called the Firefly Algorithm (1).  We hypothesize that
+                this will produce more accurate assemblies than other assemblers.
+            \end{block}
             \begin{block}{Introduction}
-                Something way cool here.
+                Currently the computational time required to accurately
+                assemble a de novo genome is a significant bottleneck in
+                bioinformatics.  Algorithms exist that can assemble a genome in
+                a relatively short time, but these algorithms typically are not
+                able to guarantee an accurate assembly. Conversely, algorithms
+                exist that can guarantee an accurate assembly of reads but that
+                are unacceptably inefficient.  By modeling genome assembly as a
+                Travelling Salesman Problem (TSP), we show how established
+                algorithms for getting near-optimal results on that problem
+                can be used for the purpose of solving the genome assembly
+                problem.
             \end{block}
             \begin{block}{Feature Extraction}
                 I am a doof.
