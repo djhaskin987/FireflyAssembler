@@ -54,15 +54,24 @@ We chose to implement our sequencer in C++.  C++ is a mature language with nearl
 
 Results
 -------
+After implementing the LocalSearch and Firefly algorithms as well as a basic greedy (shotgun) algorithm, we ran them against simulated reads generated from scaffolds between 500 and 5000 base pairs long with 5x coverage and a median read length of 100bp, intended to simulate real short read sequences.  We measured the algorithms' performance on three key metrics: the N50 length of the assemblies, the total number of contigs found, and the time necessary to run the algorithm.
+
+![N50 Length](n50.png)
+
+![Number of Contigs](num_contigs.png)
+
+![Time Taken](assembly_time.png)
+
 
 Conclusions
 -----------
+After reviewing our results, it is evident that our implementation of the Firefly algorithm is incapable of assembling large numbers of reads.  However, both the LocalSearch and Greedy algorithms show good performance characteristics while assembling up to 5,000 reads, and similar performance could likely be achieved with larger numbers of reads. 
 
 Future Work
 -----------
 The Firefly algorithm's greatest advantage is its ability to easily be parallelized across multiple cores and computers.  Although we did not implement this functionality in our initial version, adding it on should be simple.
 
-Additionally, further performance and accuracy comparisons should be made with existing assemblers to better benchmark our algorithms. 
+We are not convinced that the Firefly algorithm's performance is as frankly terrible as it appears to be in our simple test.  With time spent profiling the algorithm and seeking improvements it may still be a viable solution to the problem of genome assembly.
 
 References
 ----------
