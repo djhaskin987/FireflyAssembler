@@ -8,8 +8,7 @@
 \boldmath
 \usepackage[orientation=landscape,size=a0,scale=1.5]{beamerposter}
 \usepackage{array,booktabs,tabularx}
-\newcolumntype{Z}{>{\centering\arraybackslash}X}
-\listfiles
+\newcolumntype{Z}{>{\centering\arraybackslash}X} \listfiles
 \graphicspath{{figures/}}
 \title{\huge Firefly Assembler: Parallelizing the Assembly of Genome Fragments}
 \author{Kyle Corbitt, Dan Haskin}
@@ -68,7 +67,7 @@
             \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
                 \begin{minipage}[T]{.95\textwidth}
                     \parbox[t][\columnheight]{\textwidth}{
-                        \begin{block}{Greedy}
+                        \begin{block}{Greedy Algorithm}
                             As a base line, we use the greedy algorithm to
                             traverse the sequence overlap graph.  In essence,
                             the greatest overlaps are added to the path through
@@ -81,33 +80,23 @@
                         \end{block}
                         \begin{block}{LocalSearch Algorithm}
                             The LocalSearch algorithm works by taking an
-                            initial path and then trying different variations
-                            on it to find a more efficient graph traversal.  In
-                            the example below the two edges connecting the
-                            central point from above are replaced by edges
-                            connecting the point from below, leading to a more
-                            efficient final path.  Local search is a
-                            well-established algorithm that can find a
-                            reasonably good solution in a short amount of time.
-                            \begin{center}
-                                \includegraphics[scale=1.5]{localsearch_example}
-                            \end{center}
-                            {\em {\small LocalSearch example, photo courtesy http://www.cs.berkeley.edu/~vazirani/algorithms/chap9.pdf*} } \\
-
+                            initial sequencing and then trying different small
+                            variations on it to find a "better" graph traversal
+                            (a longer traversal through the overlap graph).
                         \end{block}
                         \begin{block}{Firefly Algorithm}
-                            The firefly algorithm is a novel approach to
-                            solving a graph-traversal problem.  A number of
+                            In the firefly algorithm, A number of
                             random paths through the graph are generated, and
-                            each one is called a "firefly".  Each random result
-                            is then evaluated to see how effectively it solved
-                            the problem.  Typically, these early solutions are
-                            quite poor.  However, the algorithm starts "moving"
-                            the fireflies (changing the paths) toward other
-                            fireflies that are better paths.  The better a path
-                            is, the more the other fireflies will be attracted
-                            to it, just as real fireflies are attracted by
-                            other bright fireflies.
+                            each one is called a "firefly". The algorithm
+                            starts "moving" the fireflies (changing the paths)
+                            toward other fireflies based on how "bright" (good)
+                            they are, and how "close" (similar) they are to
+                            each other, as shown below.
+                            \begin{center}
+                                \includegraphics[scale=1.5]{example_firefly}
+                            \end{center}
+                            {\em {\small photo courtesy of \url{http://www.mathworks.com/matlabcentral/fx_files/38931/3/SwarmFireFly_distance.jpg}. } }
+                             
                         \end{block}
                     }
         \end{minipage}
@@ -120,7 +109,18 @@
                         \begin{block}{Introduction}
                             Something way cool here.
                         \end{block}
-                        \vfill
+                        \begin{block}{Introduction}
+                            Something way cool here.
+                        \end{block}
+                        \begin{block}{Introduction}
+                            Something way cool here.
+                        \end{block}
+                        \begin{block}{Introduction}
+                            Something way cool here.
+                        \end{block}
+                        \begin{block}{Introduction}
+                            Something way cool here.
+                        \end{block}
                     }
                 \end{minipage}
             \end{beamercolorbox}
