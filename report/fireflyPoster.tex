@@ -4,7 +4,6 @@
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
 \usepackage{amsmath,amsthm, amssymb, latexsym}
-\usepackage{wrapfig}
 \boldmath
 \usepackage[orientation=landscape,size=a0,scale=1.5]{beamerposter}
 \usepackage{array,booktabs,tabularx}
@@ -24,26 +23,14 @@
                 \begin{minipage}[T]{.95\textwidth}
                     \parbox[t][\columnheight]{\textwidth}{
                         \begin{block}{Purpose}
-                            Our purpose is to create a genome assembler based
-                            on a novel approach called the Firefly Algorithm
-                            (1).  We hypothesize that this will produce more
-                            accurate assemblies than other assemblers.
-                        \end{block}
-                        \begin{block}{Introduction}
-                            Currently the computational time required to
-                            accurately assemble a de novo genome is a
-                            significant bottleneck in bioinformatics.
-                            Algorithms exist that can assemble a genome in a
-                            relatively short time, but these algorithms
-                            typically are not able to guarantee an accurate
-                            assembly. Conversely, algorithms exist that can
-                            guarantee an accurate assembly of reads but that
-                            are unacceptably inefficient.  By modeling genome
-                            assembly as a Travelling Salesman Problem (TSP), we
-                            show how established algorithms for getting
-                            near-optimal results on that problem can be used
-                            for the purpose of solving the genome assembly
-                            problem.
+                            By modeling genome assembly as a Travelling
+                            Salesman Problem (TSP), we show how established
+                            algorithms for getting near-optimal results on that
+                            problem can be used for the purpose of solving the
+                            genome assembly problem. One such algorithm is called
+                            the Firefly algorithm (1).  This algorithm can
+                            be paralellized and has been often used to solve
+                            TSP with good results.
                         \end{block}
                         \begin{block}{Graph Representation}
                             In order to apply the LocalSearch and Firefly
@@ -53,20 +40,7 @@
                             \begin{center}
                                 \includegraphics[scale=0.75]{example_graph}
                             \end{center}
-                            Each node in the graph represents a short read. The
-                            edges connecting the nodes represent overlaps.  The
-                            challenge of assembly then becomes finding a path
-                            through the graph that connects all the nodes,
-                            using a route that is as "long" as possible
-                            (contains the greatest possible number of overlaps).
                        \end{block}
-                } \end{minipage}
-            \end{beamercolorbox}
-        \end{column}
-        \begin{column}{.32\textwidth}
-            \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
-                \begin{minipage}[T]{.95\textwidth}
-                    \parbox[t][\columnheight]{\textwidth}{
                         \begin{block}{Greedy Algorithm}
                             As a base line, we use the greedy algorithm to
                             traverse the sequence overlap graph.  In essence,
@@ -79,11 +53,19 @@
                             many sequence assemblers today.
                         \end{block}
                         \begin{block}{LocalSearch Algorithm}
-                            The LocalSearch algorithm works by taking an
+                            As another comparison, we include the LocalSearch
+                            algorithm in our results, which works by taking an
                             initial sequencing and then trying different small
                             variations on it to find a "better" graph traversal
                             (a longer traversal through the overlap graph).
                         \end{block}
+                } \end{minipage}
+            \end{beamercolorbox}
+        \end{column}
+        \begin{column}{.32\textwidth}
+            \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
+                \begin{minipage}[T]{.95\textwidth}
+                    \parbox[t][\columnheight]{\textwidth}{
                         \begin{block}{Firefly Algorithm}
                             In the firefly algorithm, A number of
                             random paths through the graph are generated, and
@@ -93,10 +75,24 @@
                             they are, and how "close" (similar) they are to
                             each other, as shown below.
                             \begin{center}
-                                \includegraphics[scale=1.5]{example_firefly}
+                                \includegraphics[scale=1.0]{example_firefly}
                             \end{center}
                             {\em {\small photo courtesy of \url{http://www.mathworks.com/matlabcentral/fx_files/38931/3/SwarmFireFly_distance.jpg}. } }
-                             
+                        \end{block}
+                        \begin{block}{Methods}
+                            We ran our algorithms against simulated reads
+                            generated from scaffolds between 500 and 5000 base
+                            pairs long with {\bf 5x} coverage and a median read
+                            length of {\bf 100bp}. \\ \\
+                            We measured the algorithms' performance on three
+                            key metrics: the N50 length of the assemblies, the
+                            total number of contigs found, and the time
+                            necessary to run the algorithm.
+                        \end{block}
+                        \begin{block}{N50 comparison}
+                            \begin{center}
+                                \includegraphics[scale=0.66]{n50}
+                            \end{center}
                         \end{block}
                     }
         \end{minipage}
@@ -106,20 +102,34 @@
             \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
                 \begin{minipage}[T]{.95\textwidth}
                     \parbox[t][\columnheight]{\textwidth}{
-                        \begin{block}{Introduction}
-                            Something way cool here.
+                        \begin{block}{Number of Contigs}
+                            \begin{center}
+                                \includegraphics[scale=0.66]{num_contigs}
+                            \end{center}
                         \end{block}
-                        \begin{block}{Introduction}
-                            Something way cool here.
+                        \begin{block}{Assembly Time}
+                            \begin{center}
+                                \includegraphics[scale=0.66]{assembly_time}
+                            \end{center}
                         \end{block}
-                        \begin{block}{Introduction}
-                            Something way cool here.
+                        \begin{block}{Conclusions}
+                            After reviewing our results, it is evident that our
+                            implementation of the Firefly algorithm does not
+                            perform well compared to greedy or local search,
+                            even if it were to be parallelized. \\
+                            \\
+                            Somewhat surprsingly, we do find that local search
+                            sometimes performs better than greedy in making
+                            longer contigs; however, this algorithm is not
+                            paralellizable.
                         \end{block}
-                        \begin{block}{Introduction}
-                            Something way cool here.
-                        \end{block}
-                        \begin{block}{Introduction}
-                            Something way cool here.
+                        \begin{block}{Literature}
+                            {\tiny
+                                \setbeamertemplate{bibliography item}[text]
+                                \bibliographystyle{abbrv}
+                                \nocite{*}
+                                \bibliography{poster}
+                            }
                         \end{block}
                     }
                 \end{minipage}
