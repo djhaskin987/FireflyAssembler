@@ -12,7 +12,7 @@
 #include "PathFinder.hpp"
 #include <vector>
 
-#define NUM_FIREFLIES 20
+#define NUM_FIREFLIES 100
 #define NUM_ITERATIONS 100
 #define MOVEMENT_RATE 10
 

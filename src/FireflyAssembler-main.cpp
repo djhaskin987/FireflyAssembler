@@ -416,6 +416,11 @@ int main(int argc, char * argv[])
         cout << "    Number of sequences after contains elimination: "
              << sequences->size() << endl;
         cout << "    Done eliminating contain duplicates." << endl;
+        if (sequences->size() == 1)
+        {
+            cout << "    Only one sequence left." << endl;
+            break;
+        }
         cout << "  Merging Overlaps..." << endl;
         IGraphPointer graph(new Graph());
         cout << "    Loading Graph..." << endl;
