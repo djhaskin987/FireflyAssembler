@@ -11,7 +11,7 @@
 \graphicspath{{figures/}}
 \title{\huge Firefly Assembler: Parallelizing the Assembly of Genome Fragments}
 \author{Kyle Corbitt, Dan Haskin}
-\institute[Brigham Young University]{Molecular Biology and Computer Science Departments}
+\institute[Brigham Young University]{Computer Science Department}
 \date[Nov. 20th, 2013]{Nov. 20th, 2013}
 \newlength{\columnheight}
 \setlength{\columnheight}{105cm}
@@ -28,7 +28,7 @@
                             algorithms for getting near-optimal results on that
                             problem can be used for the purpose of solving the
                             genome assembly problem. One such algorithm is called
-                            the Firefly algorithm (1).  This algorithm can
+                            the Firefly algorithm {[}1{]}.  This algorithm can
                             be paralellized and has been often used to solve
                             TSP with good results.
                         \end{block}
@@ -56,8 +56,9 @@
                             As another comparison, we include the LocalSearch
                             algorithm in our results, which works by taking an
                             initial sequencing and then trying different small
-                            variations on it to find a "better" graph traversal
-                            (a longer traversal through the overlap graph).
+                            variations on it to find a more optimal graph
+                            traversal (a traversal with greater overlaps
+                            overall).
                         \end{block}
                 } \end{minipage}
             \end{beamercolorbox}
@@ -89,7 +90,7 @@
                             total number of contigs found, and the time
                             necessary to run the algorithm.
                         \end{block}
-                        \begin{block}{N50 comparison}
+                        \begin{block}{N50 Comparison}
                             \begin{center}
                                 \includegraphics[scale=0.66]{n50_poster}
                             \end{center}
