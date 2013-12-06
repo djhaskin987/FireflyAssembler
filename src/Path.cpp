@@ -137,7 +137,8 @@ void Path::swapSequences(int index, int new_sequence)
     for( int i=0 ; i<path.size() ; i++)
         if (path[i] == new_sequence)
             new_index = i;
-    swap(path[new_index], path[index]);
+    if (new_index != index)
+        swap(path[new_index], path[index]);
 }
 
 ostream & FireflyAssembler::operator << (ostream & s, const Path & p)

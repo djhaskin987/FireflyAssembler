@@ -15,6 +15,7 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
 	this->ff = ff;
 	PathFinderPointer greedyFinder;
 	greedyFinder.reset(new GreedyPathFinder());
+    fireflies.clear();
 
 //    cout << ff->rate(*greedy) << endl;
 
@@ -67,6 +68,7 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
             }
         }
     }
+    printFireflies();
 
     for(vector<PathPointer>::iterator it = fireflies.begin() ; it != fireflies.end() ; ++it)
     {
@@ -83,7 +85,7 @@ void FireflyPathFinder::printFireflies()
 {
 	for(vector<PathPointer>::iterator firefly = fireflies.begin(); firefly != fireflies.end(); ++firefly)
     {
-		cout << **firefly << "(" << ff->rate(**firefly) << ")" << endl;
+		cout << **firefly << "(" << ff->rate(**firefly) << ")"
+             << "{" << (*firefly)->getGraph()->sequenceCount() << "}" << endl;
     }
-    cout << *fireflies[7] << endl;
 }
