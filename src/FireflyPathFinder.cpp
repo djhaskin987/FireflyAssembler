@@ -9,6 +9,19 @@
 using namespace FireflyAssembler;
 using namespace std;
 
+int FireflyPathFinder::bitSizeOf(int number)
+{
+    int mask = 1UL;
+    int size = 0;
+    for (int i = 0; mask < number && i < sizeof(int) * 8; i++)
+    {
+        mask <<= 1;
+        size++;
+    }
+    return size;
+}
+
+
 PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
         FitnessFunctionPointer ff, DistanceMetricPointer dm)
 {
@@ -17,75 +30,86 @@ PathPointer FireflyPathFinder::findPath(IGraphConstPointer graph,
 	greedyFinder.reset(new GreedyPathFinder());
     fireflies.clear();
 
-//    cout << ff->rate(*greedy) << endl;
-
     // generate random paths
+    double fittest_rating = -numeric_limits<double>::infinity();
+    PathPointer fittest;
 	srand(time(0));
-    for(int i=0 ; i<NUM_FIREFLIES ; i++)
+    int fireflyCount = NUM_FIREFLIES;
+    int bits = bitSizeOf(graph->sequenceCount());
+    fireflyCount *= (bits * bits);
+    for(int i=0 ; i<fireflyCount ; i++)
     {
     	vector<int> numbers;
     	for(int i=0 ; i<graph->sequenceCount() ; i++)
     		numbers.push_back(i);
 
     	random_shuffle(numbers.begin(), numbers.end());
-
-    	fireflies.push_back(PathPointer(new Path(graph, numbers)));
+        PathPointer newPath(new Path(graph, numbers));
+        double fitness = ff->rate(*newPath);
+    	fireflies.push_back(
+                make_pair(newPath,fitness));
+        if (fitness > fittest_rating)
+        {
+            fittest_rating = fitness;
+            fittest.reset(new Path(*newPath));
+        }
     }
 
     // fireflies.push_back(greedyFinder->findPath(graph, ff, dm));
 
-    double fittest_rating = -numeric_limits<double>::infinity();
-    PathPointer fittest;
-    for(int i=0 ; i<NUM_ITERATIONS ; i++)
+    int iterations = NUM_ITERATIONS * graph->sequenceCount();
+    for(int i=0 ; i< iterations ; i++)
     {
-        for(vector<PathPointer>::iterator f1 = fireflies.begin(); f1 != fireflies.end(); ++f1)
+        for(vector<pair<PathPointer,double> >::iterator f1 = fireflies.begin(); f1 != fireflies.end(); ++f1)
         {
-            for(vector<PathPointer>::iterator f2 = fireflies.begin(); f2 != fireflies.end(); ++f2)
+            double maxIntensity = -numeric_limits<double>::infinity();
+            PathPointer maxIntensityFirefly;
+
+            for(vector<pair<PathPointer, double> >::iterator f2 = fireflies.begin(); f2 != fireflies.end(); ++f2)
             {
                 if (f1 != f2) {
-                    double distance = dm->distance(**f1, **f2)+.0001;
-                    double f1Fitness = ff->rate(**f1);
-                    double f2Fitness = ff->rate(**f2);
+                    double distance = dm->distance(*(f1->first), *(f2->first))+1.0;
+                    double f1Fitness = f1->second;
+                    double f2Fitness = f2->second;
                     if (f1Fitness > fittest_rating)
                     {
                         fittest_rating = f1Fitness;
-                        fittest.reset(new Path(**f1));
+                        fittest.reset(new Path(*(f1->first)));
                     }
-                    double intensity = f2Fitness - f1Fitness;
-                    int movement = (int)floor(intensity/distance*MOVEMENT_RATE);
-                    int moves_completed = 0;
-                    int j=0;
-                    while( j<graph->sequenceCount() && moves_completed<movement )
+                    double intensity = (f2Fitness - f1Fitness) / distance;
+                    if (intensity > maxIntensity)
                     {
-                        if((**f1)[j] != (**f2)[j])
-                        {
-                            (*f1)->swapSequences(j, (**f2)[j]);
-                            moves_completed++;
-                        }
-                        j++;
+                        maxIntensity = intensity;
+                        maxIntensityFirefly = f2->first;
                     }
+                }
+
+            }
+            for (int j = 0; j < graph->sequenceCount(); j++)
+            {
+                if((*(f1->first))[j] != (*maxIntensityFirefly)[j])
+                {
+                    (f1->first)->swapSequences(j, (*maxIntensityFirefly)[j]);
+                    f1->second = ff->rate(*(f1->first));
+                    if (f1->second > fittest_rating)
+                    {
+                        fittest_rating = f1->second;
+                        fittest.reset(new Path(*(f1->first)));
+                    }
+                    break;
                 }
             }
         }
     }
-    printFireflies();
 
-    for(vector<PathPointer>::iterator it = fireflies.begin() ; it != fireflies.end() ; ++it)
-    {
-        if (ff->rate(**it) > fittest_rating)
-        {
-            fittest_rating = ff->rate(**it);
-            fittest = *it;
-        }
-    }
 	return fittest;
 }
 
 void FireflyPathFinder::printFireflies()
 {
-	for(vector<PathPointer>::iterator firefly = fireflies.begin(); firefly != fireflies.end(); ++firefly)
+	for(vector<pair<PathPointer,double> >::iterator firefly = fireflies.begin(); firefly != fireflies.end(); ++firefly)
     {
-		cout << **firefly << "(" << ff->rate(**firefly) << ")"
-             << "{" << (*firefly)->getGraph()->sequenceCount() << "}" << endl;
+		cout << *(firefly->first) << "(" << firefly->second << ")"
+             << "{" << firefly->first->getGraph()->sequenceCount() << "}" << endl;
     }
 }
