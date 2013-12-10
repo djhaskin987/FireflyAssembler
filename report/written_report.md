@@ -1,6 +1,6 @@
 An analysis of Firefly and LocalSearch algorithms for short read assembly
 =========================================================================
-#### *Dan Haskin and Kyle Corbitt 12/5/2013*
+#### *Dan Haskin and Kyle Corbitt, 12/5/2013*
 
 Abstract
 --------
